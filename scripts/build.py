@@ -191,22 +191,40 @@ def serialize_legacy_source_rules(matchers):
             rules.append({m.kind:[m.value]})
     return rules
 
-def benchmark_rule_sets(rule_dir, sb, groups, tmp):
-    """Load all local binary rule sets once and record a comparable RSS sample."""
-    config={'log':{'level':'error'},'outbounds':[{'type':'direct','tag':'direct'}],
+def benchmark_rule_sets(rule_dir, sb, groups, tmp, port):
+    """Measure a real running sing-box process, not just `sing-box check`."""
+    config={'log':{'level':'error'},'inbounds':[{'type':'mixed','tag':'benchmark-in','listen':'127.0.0.1','listen_port':port}],
+      'outbounds':[{'type':'direct','tag':'direct'}],
       'route':{'rule_set':[{'type':'local','tag':g['tag'],'format':'binary','path':str(rule_dir/f'{g["tag"]}.srs')} for g in groups],
                'rules':[{'rule_set':[g['tag']],'action':'route','outbound':'direct'} for g in groups]}}
     path=tmp/f'benchmark-{rule_dir.name}.json'; path.write_text(json.dumps(config))
-    started=time.perf_counter(); p=subprocess.run(['/usr/bin/time','-v',sb,'check','-c',str(path)],capture_output=True,text=True)
-    elapsed_ms=round((time.perf_counter()-started)*1000,2)
-    if p.returncode:
-        # macOS BSD time lacks -v; its -l output still carries a usable RSS field.
-        started=time.perf_counter(); p=subprocess.run(['/usr/bin/time','-l',sb,'check','-c',str(path)],capture_output=True,text=True)
-        elapsed_ms=round((time.perf_counter()-started)*1000,2)
-    if p.returncode: raise RuntimeError('benchmark config failed: '+p.stderr)
-    hit=re.search(r'(?:Maximum resident set size \(kbytes\):|maximum resident set size)\s*(\d+)',p.stderr,re.I)
-    if not hit: raise RuntimeError('benchmark RSS was not reported: '+p.stderr)
-    return {'max_rss':int(hit.group(1)),'rss_unit':'kb' if '-v' in p.args else 'platform-dependent','init_ms':elapsed_ms}
+    samples=[]
+    for attempt in range(3):
+        started=time.perf_counter(); process=subprocess.Popen([sb,'run','-c',str(path)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,text=True)
+        ready=False
+        try:
+            deadline=time.time()+15
+            while time.time()<deadline and process.poll() is None:
+                try:
+                    import socket
+                    with socket.create_connection(('127.0.0.1',port),timeout=0.1): ready=True; break
+                except OSError: time.sleep(0.05)
+            if not ready:
+                error=process.stderr.read() if process.poll() is not None else 'listener did not become ready'
+                raise RuntimeError('runtime benchmark failed: '+error[-1000:])
+            init_ms=round((time.perf_counter()-started)*1000,2); time.sleep(1.0)
+            rss_path=Path(f'/proc/{process.pid}/status')
+            if not rss_path.exists():
+                return {'max_rss':0,'rss_unit':'platform-unavailable','init_ms':init_ms,'runs':3,'samples':[]}
+            status=rss_path.read_text(); match=re.search(r'^VmRSS:\s+(\d+)\s+kB$',status,re.M)
+            if not match: raise RuntimeError('runtime benchmark did not report VmRSS')
+            samples.append({'max_rss':int(match.group(1)),'init_ms':init_ms})
+        finally:
+            if process.poll() is None: process.terminate()
+            try: process.wait(timeout=5)
+            except subprocess.TimeoutExpired: process.kill(); process.wait()
+    rss=sorted(x['max_rss'] for x in samples)[1]; init=sorted(x['init_ms'] for x in samples)[1]
+    return {'max_rss':rss,'rss_unit':'kb','init_ms':init,'runs':3,'samples':samples}
 def expand_asn(allms):
     need={m.value for ms in allms.values() for m in ms if m.kind in ('asn','src_asn')}
     if not need: return allms, {}
@@ -348,11 +366,11 @@ def main():
         if route_tags != expected_tags: raise RuntimeError('route order does not match derived segments')
         source_tags={p.stem for p in (tmp/'source').glob('*.json')}; srs_tags={p.stem for p in (tmp/'srs').glob('*.srs')}
         if source_tags != set(expected_tags) or srs_tags != set(expected_tags): raise RuntimeError('source/SRS tags do not match route')
-        legacy_benchmark=benchmark_rule_sets(tmp/'legacy-srs',a.sing_box,groups,tmp)
-        optimized_benchmark=benchmark_rule_sets(tmp/'srs',a.sing_box,groups,tmp)
+        legacy_benchmark=benchmark_rule_sets(tmp/'legacy-srs',a.sing_box,groups,tmp,18080)
+        optimized_benchmark=benchmark_rule_sets(tmp/'srs',a.sing_box,groups,tmp,18081)
         if legacy_benchmark['rss_unit'] != optimized_benchmark['rss_unit']: raise RuntimeError('benchmark RSS units differ')
         rss_comparable=legacy_benchmark['max_rss']>0 and optimized_benchmark['max_rss']>0
-        benchmark={'version':1,'platform':' '.join(subprocess.run(['uname','-srm'],capture_output=True,text=True).stdout.split()),'rss_unit':legacy_benchmark['rss_unit'],'rss_comparable':rss_comparable,'legacy':legacy_benchmark,'optimized':optimized_benchmark,'rss_reduction_percent':round((legacy_benchmark['max_rss']-optimized_benchmark['max_rss'])/legacy_benchmark['max_rss']*100,2) if rss_comparable else None,'init_reduction_percent':round((legacy_benchmark['init_ms']-optimized_benchmark['init_ms'])/legacy_benchmark['init_ms']*100,2) if legacy_benchmark['init_ms'] else 0.0}
+        benchmark={'version':1,'method':'sing-box run with local binary SRS, loopback mixed inbound, 3 runs; median reported','platform':' '.join(subprocess.run(['uname','-srm'],capture_output=True,text=True).stdout.split()),'rss_unit':legacy_benchmark['rss_unit'],'rss_comparable':rss_comparable,'legacy':legacy_benchmark,'optimized':optimized_benchmark,'legacy_max_rss_kb':legacy_benchmark['max_rss'] or None,'optimized_max_rss_kb':optimized_benchmark['max_rss'] or None,'median_max_rss_kb':optimized_benchmark['max_rss'] or None,'legacy_init_ms':legacy_benchmark['init_ms'],'optimized_init_ms':optimized_benchmark['init_ms'],'median_init_ms':optimized_benchmark['init_ms'],'rss_reduction_percent':round((legacy_benchmark['max_rss']-optimized_benchmark['max_rss'])/legacy_benchmark['max_rss']*100,2) if rss_comparable else None,'init_reduction_percent':round((legacy_benchmark['init_ms']-optimized_benchmark['init_ms'])/legacy_benchmark['init_ms']*100,2) if legacy_benchmark['init_ms'] else 0.0}
         if rss_comparable and optimized_benchmark['max_rss'] >= legacy_benchmark['max_rss']: raise RuntimeError('runtime RSS benchmark did not improve: '+json.dumps({'legacy':legacy_benchmark,'optimized':optimized_benchmark}))
         (tmp/'memory-benchmark.json').write_text(json.dumps(benchmark,ensure_ascii=False,indent=2)+'\n')
         (tmp/'memory-benchmark.md').write_text('# Runtime Memory Benchmark\n\n| Metric | Legacy | Optimized | Reduction |\n|---|---:|---:|---:|\n| Max RSS ('+benchmark['rss_unit']+') | '+str(legacy_benchmark['max_rss'])+' | '+str(optimized_benchmark['max_rss'])+' | '+str(benchmark['rss_reduction_percent'])+'% |\n| Initialization (ms) | '+str(legacy_benchmark['init_ms'])+' | '+str(optimized_benchmark['init_ms'])+' | '+str(benchmark['init_reduction_percent'])+'% |\n\nLinux/macOS RSS is a comparative CI signal, not an iOS Packet Tunnel memory guarantee.\n')
