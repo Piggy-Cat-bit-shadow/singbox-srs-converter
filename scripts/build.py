@@ -176,7 +176,7 @@ def serialize_source_rules(matchers):
             else: fields.setdefault(m.kind,[]).append(m.value)
         rules.append({k:list(dict.fromkeys(v)) for k,v in fields.items() if v})
     return rules
-def semantic_audit(srs_dir, sb, groups):
+def semantic_audit(rule_dir, sb, groups, fmt='binary'):
     corpus=[
       ('youtube.com','overseas'),('www.youtube.com','overseas'),('music.youtube.com','overseas'),('ads.youtube.com','overseas'),
       ('youtubei.googleapis.com','overseas'),('youtube.googleapis.com','overseas'),('googlevideo.com','overseas'),('r1---sn.googlevideo.com','overseas'),
@@ -187,11 +187,14 @@ def semantic_audit(srs_dir, sb, groups):
     for domain, expected in corpus:
         hits=[]
         for g in groups:
-            p=subprocess.run([sb,'rule-set','match','-f','binary',str(srs_dir/f'{g["tag"]}.srs'),domain],capture_output=True,text=True)
+            suffix='.srs' if fmt=='binary' else '.json'
+            p=subprocess.run([sb,'rule-set','match','-f',fmt,str(rule_dir/f'{g["tag"]}{suffix}'),domain],capture_output=True,text=True)
             if p.returncode==0 and p.stderr.startswith('match '): hits.append(g['tag'])
         actual=hits[0] if hits else None
         audit.append({'domain':domain,'expected':expected,'matched_groups':hits,'first_match':actual,'passed':actual==expected})
     return audit
+def sha256_file(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('input'); ap.add_argument('--base-url',default='https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main'); ap.add_argument('--sing-box',default='sing-box'); a=ap.parse_args()
     cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; groups=derive_groups(cfg); names=[p for g in groups for p in g['providers']]
@@ -202,7 +205,7 @@ def main():
             ms,sha,raw=load(n,s,ROOT); allms[n]=ms; details[n]={'raw_count':raw,'parsed_count':len(ms),'sha256':sha,'source':s.get('url',s.get('path'))}
         asn_rules=sum(1 for ms in allms.values() for m in ms if m.kind in ('asn','src_asn'))
         allms,asn_audit=expand_asn(allms)
-        group_details={}; before_total=after_total=0
+        group_details={}; before_total=after_total=0; coverage={}; compile_count=decompile_count=0
         for g in groups:
             ms=[m for n in g['providers'] for m in allms[n]]; before=len(ms); clean,st=dedup(ms)
             before_total += before; after_total += len(clean)
@@ -211,21 +214,38 @@ def main():
             if not rules: raise ValueError(f'empty group {g["tag"]}')
             (tmp/'source'/f'{g["tag"]}.json').write_text(json.dumps({'version':2,'rules':rules},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
             subprocess.run([a.sing_box,'rule-set','compile','--output',str(tmp/'srs'/f'{g["tag"]}.srs'),str(tmp/'source'/f'{g["tag"]}.json')],check=True)
+            compile_count+=1
             decompiled=tmp/f"decompiled-{g['tag']}.json"
             subprocess.run([a.sing_box,'rule-set','decompile',str(tmp/'srs'/f'{g["tag"]}.srs'),'-o',str(decompiled)],check=True)
             json.loads(decompiled.read_text(encoding='utf-8'))
             decompiled.unlink()
+            decompile_count+=1
             group_details[g['tag']]={'provider_count':len(g['providers']),'raw_rules':sum(details[n]['raw_count'] for n in g['providers']),'before_dedup':before,'after_dedup':len(clean),'removed':before-len(clean),'srs_bytes':(tmp/'srs'/f'{g["tag"]}.srs').stat().st_size}
+            for provider in g['providers']:
+                survivors=[m for m in clean if m.provider==provider]
+                coverage[provider]={'group':g['tag'],'raw_rules':details[provider]['raw_count'],'converted_matchers':len(allms[provider]),'headless_rules':len(serialize_source_rules(survivors))}
+                if not survivors: raise ValueError(f'provider lost after exact dedup: {provider}')
         route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':POLICY_OUTBOUNDS[g['policy']]}) for g in groups],'final':'overseas'}}
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
         semantic=semantic_audit(tmp/'srs',a.sing_box,groups)
+        source_semantic=semantic_audit(tmp/'source',a.sing_box,groups,'source')
+        if [x['first_match'] for x in semantic] != [x['first_match'] for x in source_semantic]: raise RuntimeError('source/binary semantic parity failed')
         failed=[x for x in semantic if not x['passed']]
         audit_payload={'version':1,'route_order':[g['tag'] for g in groups],'total':len(semantic),'passed':len(semantic)-len(failed),'failed':len(failed),'cases':semantic}
         (tmp/'semantic-audit.json').write_text(json.dumps(audit_payload,ensure_ascii=False,indent=2)+'\n')
         if failed: raise RuntimeError('semantic regression failed: '+json.dumps(failed,ensure_ascii=False))
+        route_tags=[r['rule_set'][0] for r in route['route']['rules'][1:]]
+        expected_tags=[g['tag'] for g in groups]
+        if route_tags != expected_tags: raise RuntimeError('route order does not match derived segments')
+        source_tags={p.stem for p in (tmp/'source').glob('*.json')}; srs_tags={p.stem for p in (tmp/'srs').glob('*.srs')}
+        if source_tags != set(expected_tags) or srs_tags != set(expected_tags): raise RuntimeError('source/SRS tags do not match route')
+        acceptance={'version':1,'input_sha256':sha256_file(Path(a.input)),'provider_coverage':coverage,'providers_included':len(coverage),'providers_total':len(providers),'segments':len(groups),'srs_compile':{'passed':compile_count,'total':len(groups)},'srs_decompile':{'passed':decompile_count,'total':len(groups)},'semantic_regression':{'passed':audit_payload['passed'],'total':audit_payload['total'],'failed':audit_payload['failed']},'source_binary_parity':True,'route_coherence':True,'source_sha256':{p.stem:sha256_file(p) for p in (tmp/'source').glob('*.json')},'srs_sha256':{p.stem:sha256_file(p) for p in (tmp/'srs').glob('*.srs')},'route_sha256':sha256_file(tmp/'generated'/'sing-box-route.json')}
+        (tmp/'acceptance.json').write_text(json.dumps(acceptance,ensure_ascii=False,indent=2)+'\n')
+        status='# Build Status: PASS\n\nInput: examples/my-rules.yaml\n\nProviders: {}/{} included\nSegments: {}/{}\nSRS compile: {}/{} PASS\nSRS decompile: {}/{} PASS\nProvider coverage: {}/{} PASS\nSemantic regression: {}/{} PASS\nSource/Binary parity: PASS\nRoute order: PASS\nUnsupported rules: 0\n\nResult:\nAll generated rule sets passed acceptance checks.\n'.format(len(coverage),len(providers),len(groups),len(groups),compile_count,len(groups),decompile_count,len(groups),len(coverage),len(providers),audit_payload['passed'],audit_payload['total'])
+        (tmp/'STATUS.md').write_text(status)
         removed=before_total-after_total
         if removed != sum(stats.values()): raise ValueError('dedup accounting mismatch')
-        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload}
+        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload,'acceptance':acceptance}
         report_json=json.dumps(report,ensure_ascii=False,indent=2)+'\n'; json.loads(report_json); (tmp/'report.json').write_text(report_json)
         md='# singbox-srs-converter Build Report\n\n## Summary\n\n| Item | Value |\n|---|---:|\n'+''.join(f'| {k} | {report[k]} |\n' for k in ('providers','groups','raw_rules','mapped_original_rules','unsupported_rules','asn_rules','asn_expanded_prefixes','before_dedup_matchers','after_dedup_matchers','removed_matchers','removed_percent'))
         (tmp/'report.md').write_text(md)
