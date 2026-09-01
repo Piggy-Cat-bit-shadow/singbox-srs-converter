@@ -1,8 +1,0 @@
-groups:
-  - {tag: direct-pre, policy: DIRECT, modifiers: [], providers: [Lan, private]}
-  - {tag: ai, policy: "🤖 AI", modifiers: [], providers: [me, AppleProxy, AppleIntelligence, openai, claude, Anthropic, gemini, AI, cloudflare, GoogleVoice, Crypto, IPCheck, paypal]}
-  - {tag: direct-middle, policy: DIRECT, modifiers: [], providers: [wechat, apple, icloud, qcloud, Scholar-China]}
-  - {tag: overseas, policy: "⚡ 海外高速", modifiers: [], providers: [Scholar-Foreign, Scholar, Telegram, github, GoogleEarth, WhatsApp, Discord, netflix, disney, primevideo, GoogleDrive, OneDrive, Dropbox, MEGA, youtube, Instagram, Facebook, Twitter, Reddit, Spotify, tiktok, google, global]}
-  - {tag: ads, policy: REJECT-DROP, modifiers: [], providers: [AWAvenueAds, HageziAds, AntiAD]}
-  - {tag: direct-cn, policy: DIRECT, modifiers: [], providers: [DouYin, BiliBili, BaiDuTieBa, alibaba-domain, alibaba, chinamax]}
-  - {tag: direct-cn-ip, policy: DIRECT, modifiers: [no-resolve], providers: [cn-ip]}

@@ -1,15 +1,42 @@
 #!/usr/bin/env python3
 import argparse, csv, gzip, hashlib, ipaddress, io, json, re, shutil, subprocess, tempfile, urllib.request, ssl, time, yaml
+from http.client import IncompleteRead
 import certifi
 from dataclasses import dataclass
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-GROUPS=yaml.safe_load((ROOT/'config/groups.yaml').read_text())['groups']
+# Compatibility names for the current seven positional policy segments.  Provider
+# membership and ordering are always derived from the input rules list.
+SEGMENT_TAGS={('DIRECT',(),1):'direct-pre',('🤖 AI',(),1):'ai',('DIRECT',(),2):'direct-middle',('⚡ 海外高速',(),1):'overseas',('REJECT-DROP',(),1):'ads',('DIRECT',(),3):'direct-cn',('DIRECT',('no-resolve',),1):'direct-cn-ip'}
+POLICY_OUTBOUNDS={'DIRECT':'direct','🤖 AI':'ai','⚡ 海外高速':'overseas'}
 SAMPLES={k:[] for k in ('exact_duplicates_removed','domain_covered_by_suffix','suffix_covered_by_parent_suffix','ipcidr_duplicates_removed','ipcidr_covered_by_parent')}
 @dataclass(frozen=True)
 class M:
     kind:str; value:str; modifiers:tuple=(); provider:str=''; source:str=''; expanded_from:str|None=None
+
+def derive_groups(cfg):
+    """Derive contiguous RULE-SET segments directly from the sole input SoT."""
+    groups=[]; current=None; counts={}
+    for index, raw in enumerate(cfg.get('rules',[])):
+        parts=str(raw).split(',')
+        if parts[0].upper()!='RULE-SET':
+            current=None
+            continue
+        if len(parts)<3: raise ValueError(f'rules[{index}]: malformed RULE-SET: {raw}')
+        provider,policy=parts[1],parts[2]; modifiers=tuple(parts[3:])
+        if any(x not in ('no-resolve',) for x in modifiers): raise ValueError(f'rules[{index}]: unsupported RULE-SET modifier: {raw}')
+        key=(policy,modifiers)
+        if current is None or current['_key']!=key:
+            ordinal=counts.get(key,0)+1; counts[key]=ordinal
+            tag=SEGMENT_TAGS.get((policy,modifiers,ordinal))
+            if tag is None: raise ValueError(f'rules[{index}]: no stable public tag for segment {key} #{ordinal}')
+            current={'tag':tag,'policy':policy,'modifiers':list(modifiers),'providers':[],'_key':key,'top_level_index':index}
+            groups.append(current)
+        current['providers'].append(provider)
+    for g in groups: g.pop('_key')
+    if not groups: raise ValueError('rules: no RULE-SET segments')
+    return groups
 
 def norm(v):
     v=v.strip().lower().rstrip('.')
@@ -63,17 +90,29 @@ def parse(raw, behavior, provider):
     if kind=='IP-ASN': return [M('asn',str(int(value)),mods,provider,source)]
     if kind=='SRC-IP-ASN': return [M('src_asn',str(int(value)),mods,provider,source)]
     raise ValueError(f'unsupported kind {kind}')
+def download_url(url):
+    """Download in-memory with Range resume; upstreams occasionally truncate."""
+    ctx=ssl.create_default_context(cafile=certifi.where()); data=bytearray(); expected=None
+    for attempt in range(100):
+        headers={'User-Agent':'singbox-srs-converter'}
+        if data: headers['Range']=f'bytes={len(data)}-'
+        try:
+            response=urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=60,context=ctx)
+            if data and response.status != 206: raise RuntimeError('server ignored HTTP Range resume')
+            length=response.headers.get('Content-Length')
+            if length: expected=len(data)+int(length)
+            data.extend(response.read())
+            if expected is None or len(data)>=expected: return bytes(data)
+        except IncompleteRead as e: data.extend(e.partial)
+        except Exception:
+            if attempt==99: raise
+        time.sleep(0.25)
+    raise RuntimeError('incomplete download after resume attempts')
 def load(pname,spec,base):
     if spec['type']=='file': data=(ROOT/spec['path']).read_bytes()
     else:
-        req=urllib.request.Request(spec['url'],headers={'User-Agent':'singbox-srs-converter'}); ctx=ssl.create_default_context(cafile=certifi.where())
-        last=None
-        for attempt in range(5):
-            try: data=urllib.request.urlopen(req,timeout=60,context=ctx).read(); break
-            except Exception as e:
-                last=e
-                if attempt==4: raise RuntimeError(f'{pname}: download failed: {e}') from e
-                time.sleep(2*(attempt+1))
+        try: data=download_url(spec['url'])
+        except Exception as e: raise RuntimeError(f'{pname}: download failed: {e}') from e
     sha=hashlib.sha256(data).hexdigest(); fmt=spec.get('format','yaml'); text=data.decode('utf-8-sig')
     if fmt=='text': vals=[x for x in text.splitlines() if x.strip() and not x.startswith('#')]
     else:
@@ -101,7 +140,7 @@ def expand_asn(allms):
     assets={x['name']:x['browser_download_url'] for x in meta['assets']}; result={k:[] for k in need}; audit={'release':meta['tag_name'],'prefixes':{}}
     for name,url in assets.items():
         if not name.endswith('.csv') or 'GeoLite2-ASN-Blocks-' not in name: continue
-        raw=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'singbox-srs-converter'}),context=ctx).read(); count=0
+        raw=download_url(url); count=0
         for row in csv.DictReader(io.TextIOWrapper(io.BytesIO(raw),encoding='utf-8')):
             if row.get('autonomous_system_number') in need:
                 result[row['autonomous_system_number']].append((row['network'], 'v4' if ':' not in row['network'] else 'v6')); count+=1
@@ -137,7 +176,7 @@ def serialize_source_rules(matchers):
             else: fields.setdefault(m.kind,[]).append(m.value)
         rules.append({k:list(dict.fromkeys(v)) for k,v in fields.items() if v})
     return rules
-def semantic_audit(srs_dir, sb):
+def semantic_audit(srs_dir, sb, groups):
     corpus=[
       ('youtube.com','overseas'),('www.youtube.com','overseas'),('music.youtube.com','overseas'),('ads.youtube.com','overseas'),
       ('youtubei.googleapis.com','overseas'),('youtube.googleapis.com','overseas'),('googlevideo.com','overseas'),('r1---sn.googlevideo.com','overseas'),
@@ -147,7 +186,7 @@ def semantic_audit(srs_dir, sb):
     audit=[]
     for domain, expected in corpus:
         hits=[]
-        for g in GROUPS:
+        for g in groups:
             p=subprocess.run([sb,'rule-set','match','-f','binary',str(srs_dir/f'{g["tag"]}.srs'),domain],capture_output=True,text=True)
             if p.returncode==0 and p.stderr.startswith('match '): hits.append(g['tag'])
         actual=hits[0] if hits else None
@@ -155,8 +194,8 @@ def semantic_audit(srs_dir, sb):
     return audit
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('input'); ap.add_argument('--base-url',default='https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main'); ap.add_argument('--sing-box',default='sing-box'); a=ap.parse_args()
-    cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; names=[p for g in GROUPS for p in g['providers']]
-    if len(providers)!=53 or len(names)!=53 or set(names)!=set(providers): raise SystemExit('provider/group mismatch; expected exactly 53 providers')
+    cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; groups=derive_groups(cfg); names=[p for g in groups for p in g['providers']]
+    if len(names)!=len(set(names)) or set(names)!=set(providers): raise SystemExit('provider/rules mismatch: every provider must be used exactly once')
     tmp=Path(tempfile.mkdtemp(prefix='srs-build-',dir=ROOT)); (tmp/'source').mkdir(); (tmp/'srs').mkdir(); (tmp/'generated').mkdir(); details={}; allms={}; stats={k:0 for k in SAMPLES}
     try:
         for n,s in providers.items():
@@ -164,7 +203,7 @@ def main():
         asn_rules=sum(1 for ms in allms.values() for m in ms if m.kind in ('asn','src_asn'))
         allms,asn_audit=expand_asn(allms)
         group_details={}; before_total=after_total=0
-        for g in GROUPS:
+        for g in groups:
             ms=[m for n in g['providers'] for m in allms[n]]; before=len(ms); clean,st=dedup(ms)
             before_total += before; after_total += len(clean)
             for k,v in st.items(): stats[k]+=v
@@ -177,16 +216,16 @@ def main():
             json.loads(decompiled.read_text(encoding='utf-8'))
             decompiled.unlink()
             group_details[g['tag']]={'provider_count':len(g['providers']),'raw_rules':sum(details[n]['raw_count'] for n in g['providers']),'before_dedup':before,'after_dedup':len(clean),'removed':before-len(clean),'srs_bytes':(tmp/'srs'/f'{g["tag"]}.srs').stat().st_size}
-        route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in GROUPS],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':{'DIRECT':'direct','🤖 AI':'ai','⚡ 海外高速':'overseas'}[g['policy']]}) for g in GROUPS],'final':'overseas'}}
+        route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':POLICY_OUTBOUNDS[g['policy']]}) for g in groups],'final':'overseas'}}
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
-        semantic=semantic_audit(tmp/'srs',a.sing_box)
+        semantic=semantic_audit(tmp/'srs',a.sing_box,groups)
         failed=[x for x in semantic if not x['passed']]
-        audit_payload={'version':1,'route_order':[g['tag'] for g in GROUPS],'total':len(semantic),'passed':len(semantic)-len(failed),'failed':len(failed),'cases':semantic}
+        audit_payload={'version':1,'route_order':[g['tag'] for g in groups],'total':len(semantic),'passed':len(semantic)-len(failed),'failed':len(failed),'cases':semantic}
         (tmp/'semantic-audit.json').write_text(json.dumps(audit_payload,ensure_ascii=False,indent=2)+'\n')
         if failed: raise RuntimeError('semantic regression failed: '+json.dumps(failed,ensure_ascii=False))
         removed=before_total-after_total
         if removed != sum(stats.values()): raise ValueError('dedup accounting mismatch')
-        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(GROUPS),'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload}
+        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload}
         report_json=json.dumps(report,ensure_ascii=False,indent=2)+'\n'; json.loads(report_json); (tmp/'report.json').write_text(report_json)
         md='# singbox-srs-converter Build Report\n\n## Summary\n\n| Item | Value |\n|---|---:|\n'+''.join(f'| {k} | {report[k]} |\n' for k in ('providers','groups','raw_rules','mapped_original_rules','unsupported_rules','asn_rules','asn_expanded_prefixes','before_dedup_matchers','after_dedup_matchers','removed_matchers','removed_percent'))
         (tmp/'report.md').write_text(md)

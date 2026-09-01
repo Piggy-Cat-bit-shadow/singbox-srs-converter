@@ -1,7 +1,7 @@
 import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
-from build import parse, dedup, serialize_source_rules
+from build import parse, dedup, serialize_source_rules, derive_groups
 
 class BuildTests(unittest.TestCase):
     def test_domain_types(self):
@@ -40,5 +40,8 @@ class BuildTests(unittest.TestCase):
             parse('NETWORK,udp','classical','x'))
         self.assertEqual(serialize_source_rules(ms),[
             {'domain_suffix':['example.com']},{'port':[443]},{'network':['udp']}])
+    def test_groups_come_from_rules_order(self):
+        cfg={'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT','RULE-SET,C,🤖 AI','RULE-SET,D,DIRECT','RULE-SET,E,⚡ 海外高速','RULE-SET,F,REJECT-DROP','RULE-SET,G,DIRECT','RULE-SET,H,DIRECT,no-resolve']}
+        self.assertEqual([g['providers'] for g in derive_groups(cfg)], [['A','B'],['C'],['D'],['E'],['F'],['G'],['H']])
 
 if __name__ == '__main__': unittest.main()
