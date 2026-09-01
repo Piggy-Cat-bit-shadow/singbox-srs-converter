@@ -451,22 +451,22 @@
   "source_binary_parity": true,
   "route_coherence": true,
   "source_sha256": {
-    "direct-cn-ip": "f5fe51ad9ef152f9919c6c22091a32668853ef3fe6453daec42794982798cee9",
     "ai": "20efa90d97c2d02532da4fa52070fd015983ec64159e8ec47c24e4945c099cde",
-    "ads": "a9ce94ce9678157e51fe2ad200b863e05f97a06ba8a94945a56dd15a874a68e6",
     "direct-pre": "ce38669f9233f0de26cc128be515d825a6daac146d597ed94b34fc6c87476d62",
     "direct-cn": "44485be8b6fe92b617d3f0773fffba76c3419b1b8b9e618c0dbd8cd606d477d1",
     "direct-middle": "dbe76b413cd18c54e09c0a28e968aaebb72cf0c3d8288bb51ac1ecb8f3b0548f",
-    "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304"
+    "direct-cn-ip": "f5fe51ad9ef152f9919c6c22091a32668853ef3fe6453daec42794982798cee9",
+    "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304",
+    "ads": "a9ce94ce9678157e51fe2ad200b863e05f97a06ba8a94945a56dd15a874a68e6"
   },
   "srs_sha256": {
     "direct-cn": "e74c95305bb4cca9ffe8a22fd8a6fbee3a3ac0078473d812c994c0b6ea948f8b",
+    "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
     "ads": "c6d946d4098d090b54ae055dea4789dcfa1989dc3f5499440a3d8e587a8290b8",
     "direct-cn-ip": "ec0c240a4d86dac60881e8d5a03ded84fb54cb4d4a219463a8b59b3104112e52",
     "direct-pre": "ad279d5cbe0d257dfe684ae29272224389f5cf6c65bc867b021e2dd7cb6703ea",
-    "direct-middle": "09f0a036c10624d0a8742d6fb01ec576d577472951c1a9e2b63386eba828c34c",
-    "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
-    "ai": "78cfa994246eae708a1adb9d61aa92fcf91e8ed06dd36d001bb3964986d55e3b"
+    "ai": "78cfa994246eae708a1adb9d61aa92fcf91e8ed06dd36d001bb3964986d55e3b",
+    "direct-middle": "09f0a036c10624d0a8742d6fb01ec576d577472951c1a9e2b63386eba828c34c"
   },
   "route_sha256": "a1e408f389b09026d9ea4f803308cdd4d176286392d2df190c97a513c9fdfd2a"
 }

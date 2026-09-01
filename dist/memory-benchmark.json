@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "platform": "Darwin 24.6.0 arm64",
-  "rss_unit": "platform-dependent",
-  "rss_comparable": false,
+  "platform": "Linux 6.17.0-1022-azure x86_64",
+  "rss_unit": "kb",
+  "rss_comparable": true,
   "legacy": {
-    "max_rss": 0,
-    "rss_unit": "platform-dependent",
-    "init_ms": 791.94
+    "max_rss": 611620,
+    "rss_unit": "kb",
+    "init_ms": 1189.12
   },
   "optimized": {
-    "max_rss": 0,
-    "rss_unit": "platform-dependent",
-    "init_ms": 96.34
+    "max_rss": 66472,
+    "rss_unit": "kb",
+    "init_ms": 66.97
   },
-  "rss_reduction_percent": null,
-  "init_reduction_percent": 87.83
+  "rss_reduction_percent": 89.13,
+  "init_reduction_percent": 94.37
 }
