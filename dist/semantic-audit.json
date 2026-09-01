@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "route_order": [
+    "direct-pre",
+    "ai",
+    "direct-middle",
+    "overseas",
+    "ads",
+    "direct-cn",
+    "direct-cn-ip"
+  ],
+  "cases": [
+    {
+      "domain": "youtube.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "www.youtube.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "music.youtube.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "ads.youtube.com",
+      "matched_groups": [
+        "overseas",
+        "ads"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "youtubei.googleapis.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "youtube.googleapis.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "googlevideo.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "r1---sn.googlevideo.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "ytimg.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "i.ytimg.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "ggpht.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "yt3.ggpht.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "chat.openai.com",
+      "matched_groups": [
+        "ai"
+      ],
+      "first_match": "ai"
+    },
+    {
+      "domain": "api.telegram.org",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "github.com",
+      "matched_groups": [
+        "overseas"
+      ],
+      "first_match": "overseas"
+    },
+    {
+      "domain": "icloud.com",
+      "matched_groups": [
+        "direct-middle",
+        "overseas"
+      ],
+      "first_match": "direct-middle"
+    },
+    {
+      "domain": "wechat.com",
+      "matched_groups": [
+        "direct-middle",
+        "direct-cn"
+      ],
+      "first_match": "direct-middle"
+    },
+    {
+      "domain": "douyin.com",
+      "matched_groups": [
+        "direct-cn"
+      ],
+      "first_match": "direct-cn"
+    },
+    {
+      "domain": "example-ad.invalid",
+      "matched_groups": [
+        "direct-pre"
+      ],
+      "first_match": "direct-pre"
+    }
+  ]
+}

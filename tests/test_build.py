@@ -19,5 +19,19 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(parse('PROCESS-NAME,org.telegram.messenger','classical','x')[0].kind,'process_name')
     def test_unsupported(self):
         with self.assertRaises(ValueError): parse('GEOIP,CN','classical','x')
+    def test_domain_provider_wildcards(self):
+        import re
+        one=re.compile(parse('*.example.com','domain','x')[0].value)
+        self.assertTrue(one.match('a.example.com')); self.assertFalse(one.match('a.b.example.com'))
+        suffix=re.compile(parse('+.example.com','domain','x')[0].value)
+        self.assertTrue(suffix.match('example.com')); self.assertTrue(suffix.match('a.b.example.com'))
+        child=re.compile(parse('.example.com','domain','x')[0].value)
+        self.assertFalse(child.match('example.com')); self.assertTrue(child.match('a.example.com'))
+    def test_adjacent_cidr_not_collapsed(self):
+        ms=parse('IP-CIDR,1.2.3.0/25','classical','x')+parse('IP-CIDR,1.2.3.128/25','classical','x')
+        out,_=dedup(ms); self.assertEqual([m.value for m in out],['1.2.3.0/25','1.2.3.128/25'])
+    def test_process_is_two_or_rules_in_source_shape(self):
+        m=parse('PROCESS-NAME,test','classical','x')[0]
+        self.assertEqual(m.kind,'process_name')
 
 if __name__ == '__main__': unittest.main()

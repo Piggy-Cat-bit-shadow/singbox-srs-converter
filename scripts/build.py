@@ -131,6 +131,16 @@ def expand_asn(allms):
             else: out.append(m)
         allms[name]=out
     return allms,audit
+def semantic_audit(srs_dir, sb):
+    corpus=['youtube.com','www.youtube.com','music.youtube.com','ads.youtube.com','youtubei.googleapis.com','youtube.googleapis.com','googlevideo.com','r1---sn.googlevideo.com','ytimg.com','i.ytimg.com','ggpht.com','yt3.ggpht.com','chat.openai.com','api.telegram.org','github.com','icloud.com','wechat.com','douyin.com','example-ad.invalid']
+    audit=[]
+    for domain in corpus:
+        hits=[]
+        for g in GROUPS:
+            p=subprocess.run([sb,'rule-set','match','-f','binary',str(srs_dir/f'{g["tag"]}.srs'),domain],capture_output=True,text=True)
+            if p.returncode==0 and p.stderr.startswith('match '): hits.append(g['tag'])
+        audit.append({'domain':domain,'matched_groups':hits,'first_match':hits[0] if hits else None})
+    return audit
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('input'); ap.add_argument('--base-url',default='https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main'); ap.add_argument('--sing-box',default='sing-box'); a=ap.parse_args()
     cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; names=[p for g in GROUPS for p in g['providers']]
@@ -161,9 +171,11 @@ def main():
             group_details[g['tag']]={'provider_count':len(g['providers']),'raw_rules':sum(details[n]['raw_count'] for n in g['providers']),'before_dedup':before,'after_dedup':len(clean),'removed':before-len(clean),'srs_bytes':(tmp/'srs'/f'{g["tag"]}.srs').stat().st_size}
         route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in GROUPS],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':{'DIRECT':'direct','🤖 AI':'ai','⚡ 海外高速':'overseas'}[g['policy']]}) for g in GROUPS],'final':'overseas'}}
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
+        semantic=semantic_audit(tmp/'srs',a.sing_box)
+        (tmp/'semantic-audit.json').write_text(json.dumps({'version':1,'route_order':[g['tag'] for g in GROUPS],'cases':semantic},ensure_ascii=False,indent=2)+'\n')
         removed=before_total-after_total
         if removed != sum(stats.values()): raise ValueError('dedup accounting mismatch')
-        report={'version':1,'providers':len(providers),'groups':len(GROUPS),'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit}
+        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(GROUPS),'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':semantic}
         report_json=json.dumps(report,ensure_ascii=False,indent=2)+'\n'; json.loads(report_json); (tmp/'report.json').write_text(report_json)
         md='# singbox-srs-converter Build Report\n\n## Summary\n\n| Item | Value |\n|---|---:|\n'+''.join(f'| {k} | {report[k]} |\n' for k in ('providers','groups','raw_rules','mapped_original_rules','unsupported_rules','asn_rules','asn_expanded_prefixes','before_dedup_matchers','after_dedup_matchers','removed_matchers','removed_percent'))
         (tmp/'report.md').write_text(md)
