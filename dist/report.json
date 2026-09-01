@@ -1,0 +1,781 @@
+{
+  "version": 1,
+  "providers": 53,
+  "groups": 7,
+  "raw_rules": 359338,
+  "mapped_original_rules": 359338,
+  "unsupported_rules": 0,
+  "asn_rules": 9,
+  "asn_expanded_prefixes": 1331,
+  "ip_rules_no_resolve": 243,
+  "ip_rules_without_no_resolve": 23656,
+  "before_dedup_matchers": 360854,
+  "after_dedup_matchers": 303812,
+  "removed_matchers": 57042,
+  "removed_percent": 15.81,
+  "dedup": {
+    "exact_duplicates_removed": 3864,
+    "domain_covered_by_suffix": 47244,
+    "suffix_covered_by_parent_suffix": 5838,
+    "ipcidr_duplicates_removed": 0,
+    "ipcidr_covered_by_parent": 96
+  },
+  "groups_detail": {
+    "direct-pre": {
+      "provider_count": 2,
+      "raw_rules": 270,
+      "before_dedup": 270,
+      "after_dedup": 150,
+      "removed": 120,
+      "srs_bytes": 810
+    },
+    "ai": {
+      "provider_count": 13,
+      "raw_rules": 843,
+      "before_dedup": 1926,
+      "after_dedup": 1867,
+      "removed": 59,
+      "srs_bytes": 13543
+    },
+    "direct-middle": {
+      "provider_count": 5,
+      "raw_rules": 603,
+      "before_dedup": 796,
+      "after_dedup": 732,
+      "removed": 64,
+      "srs_bytes": 4629
+    },
+    "overseas": {
+      "provider_count": 23,
+      "raw_rules": 37256,
+      "before_dedup": 37303,
+      "after_dedup": 29680,
+      "removed": 7623,
+      "srs_bytes": 175640
+    },
+    "ads": {
+      "provider_count": 3,
+      "raw_rules": 185262,
+      "before_dedup": 185262,
+      "after_dedup": 137607,
+      "removed": 47655,
+      "srs_bytes": 1035638
+    },
+    "direct-cn": {
+      "provider_count": 6,
+      "raw_rules": 125453,
+      "before_dedup": 125646,
+      "after_dedup": 124125,
+      "removed": 1521,
+      "srs_bytes": 503089
+    },
+    "direct-cn-ip": {
+      "provider_count": 1,
+      "raw_rules": 9651,
+      "before_dedup": 9651,
+      "after_dedup": 9651,
+      "removed": 0,
+      "srs_bytes": 36460
+    }
+  },
+  "providers_detail": {
+    "Scholar-China": {
+      "raw_count": 7,
+      "parsed_count": 7,
+      "sha256": "f0d196e44f004fc141a5b673293cdf825f73f2697d079a89b9bcfa1514b9cf13",
+      "source": "local/Scholar-China.yaml"
+    },
+    "Scholar-Foreign": {
+      "raw_count": 3,
+      "parsed_count": 3,
+      "sha256": "02fe74a11b20cdfc23727a7209a0985f131d6ffbbe572d42bfb2656c5baa98b0",
+      "source": "local/Scholar-Foreign.yaml"
+    },
+    "me": {
+      "raw_count": 15,
+      "parsed_count": 15,
+      "sha256": "ce54bbe3e49cd4be37eeff2ce9719ce5cf01c1a6958b6de4855d77d734d65c0a",
+      "source": "local/me.yaml"
+    },
+    "Lan": {
+      "raw_count": 140,
+      "parsed_count": 140,
+      "sha256": "44687576f81a639540cd678d5717d43467508d8c80678efde07588610bda239c",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lan/Lan_No_Resolve.yaml"
+    },
+    "private": {
+      "raw_count": 130,
+      "parsed_count": 130,
+      "sha256": "3a04b128200ef8097d73b1496cbb23d24bc1e05d42fffb09f07c51699efb00b2",
+      "source": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    },
+    "Scholar": {
+      "raw_count": 231,
+      "parsed_count": 231,
+      "sha256": "35ca7ffb814c4f55f5381fd1ed35f4e8ca732a3c79fb47921ff4232fea22ea19",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Scholar/Scholar.yaml"
+    },
+    "AppleIntelligence": {
+      "raw_count": 10,
+      "parsed_count": 10,
+      "sha256": "030ffa77d98148e7ea371e787582b5c1afab3f18263042b06bfa4f00b8a4d7c1",
+      "source": "https://raw.githubusercontent.com/ddgksf2013/Filter/refs/heads/master/AppleIntelligence.list"
+    },
+    "openai": {
+      "raw_count": 35,
+      "parsed_count": 35,
+      "sha256": "cf66c50e7cfbe0aa0e9e249bfa8897d152ae35b38ab6db2936ef62860b7b61b4",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml"
+    },
+    "claude": {
+      "raw_count": 3,
+      "parsed_count": 3,
+      "sha256": "ef21df39005b17dbd84aa65a47162b36fb5e72754cd32384146474ed488df482",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Claude/Claude.yaml"
+    },
+    "Anthropic": {
+      "raw_count": 3,
+      "parsed_count": 3,
+      "sha256": "af16ff9b3d5d587f93fa1761292401c8cc716fd52e7263f8ced577b90d7507c5",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anthropic/Anthropic.yaml"
+    },
+    "gemini": {
+      "raw_count": 13,
+      "parsed_count": 13,
+      "sha256": "d76e9822f72a69860b7d3086db61bbbef53014c57e3dc12472150c62a4f6434b",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
+    },
+    "AI": {
+      "raw_count": 217,
+      "parsed_count": 217,
+      "sha256": "c9a3bc1b269b27c9a3ecc3460fc5f8c90ed1201db8c3057b283bf82ee24451a8",
+      "source": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/refs/heads/ruleset/meta/ai.list"
+    },
+    "GoogleVoice": {
+      "raw_count": 1,
+      "parsed_count": 1,
+      "sha256": "6c569656f01fa0acfc0966e644c2bf514dc53d6950d3e45448c233954588439d",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleVoice/GoogleVoice.yaml"
+    },
+    "Crypto": {
+      "raw_count": 204,
+      "parsed_count": 204,
+      "sha256": "285c3e375d6e3db1e4af8249b9e7d2b83646a6e1165dda6d2400654a0933b733",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Crypto/Crypto.yaml"
+    },
+    "IPCheck": {
+      "raw_count": 25,
+      "parsed_count": 25,
+      "sha256": "6ca841efc3f0e1e6d6d2312ab68db105eb1224bd7aa3b35b3320110fdc8ed285",
+      "source": "https://raw.githubusercontent.com/iab0x00/ProxyRules/main/Rule/IPCheck.txt"
+    },
+    "paypal": {
+      "raw_count": 247,
+      "parsed_count": 247,
+      "sha256": "66c75e9ecff301097919cccb27a675251158e8d85e09c6c926995b465cab8a59",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PayPal/PayPal.yaml"
+    },
+    "wechat": {
+      "raw_count": 31,
+      "parsed_count": 31,
+      "sha256": "deeaafece9d3b360f090705f978caf14308bcc72c20412b928c7731b4a9a56f1",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeChat/WeChat_No_Resolve.yaml"
+    },
+    "cloudflare": {
+      "raw_count": 30,
+      "parsed_count": 30,
+      "sha256": "9958ea2eb658e30f47843463348bce90a0990fc411a5b3ee20934c70db096b0b",
+      "source": "https://raw.githubusercontent.com/LM-Firefly/Rules/master/Clash-RuleSet-Classical/PROXY/Cloudflare.yaml"
+    },
+    "AppleProxy": {
+      "raw_count": 40,
+      "parsed_count": 40,
+      "sha256": "683103c41509c1f660c71d39ce5290e1a13a4176ec061822f4e8e83934afba4b",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleProxy/AppleProxy.yaml"
+    },
+    "Telegram": {
+      "raw_count": 46,
+      "parsed_count": 46,
+      "sha256": "996651175d82cdc34e07c2429d5737ddbe15a5ed83e54dbaf84727a6f5927f92",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram_No_Resolve.yaml"
+    },
+    "github": {
+      "raw_count": 31,
+      "parsed_count": 31,
+      "sha256": "a2641ce2f10857831b600623f97d354e6f8db7b20dff175c5313c2c46e0b6867",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitHub/GitHub_No_Resolve.yaml"
+    },
+    "youtube": {
+      "raw_count": 183,
+      "parsed_count": 183,
+      "sha256": "7deacecc20077a39dc052d097806bfb8f89dc60970c02bfda3803edaedddaa55",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube_No_Resolve.yaml"
+    },
+    "GoogleEarth": {
+      "raw_count": 16,
+      "parsed_count": 16,
+      "sha256": "afed267cf0c6a423761509a8555fcae07d8ee0a6b07131fd3fc3955d8856e3d8",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleEarth/GoogleEarth_No_Resolve.yaml"
+    },
+    "Instagram": {
+      "raw_count": 4,
+      "parsed_count": 4,
+      "sha256": "3ea6152876ff1c998b9434761898af1242bcc6bcaeaed74023910d9d08c64e39",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Instagram/Instagram.yaml"
+    },
+    "Facebook": {
+      "raw_count": 570,
+      "parsed_count": 570,
+      "sha256": "c82828bf136de47a26458f2303d3acf2a06aaca2a18c19e67f315387ef977ed0",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Facebook/Facebook.yaml"
+    },
+    "Twitter": {
+      "raw_count": 33,
+      "parsed_count": 33,
+      "sha256": "67c46c3988da5cdc387eacee945c2950464691af0e2746929455cd9295c3ff2b",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Twitter/Twitter.yaml"
+    },
+    "Reddit": {
+      "raw_count": 8,
+      "parsed_count": 8,
+      "sha256": "bf20bcd7b2f841eb9cb2170f7e52ba4437f897eb697ac9e3f4041e674eb4cf2e",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Reddit/Reddit.yaml"
+    },
+    "Discord": {
+      "raw_count": 29,
+      "parsed_count": 29,
+      "sha256": "ce5e3cf18e7353fea35edce91f66e1dfa2a38331203b7fb245c535620d02bf8b",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Discord/Discord.yaml"
+    },
+    "GoogleDrive": {
+      "raw_count": 6,
+      "parsed_count": 6,
+      "sha256": "6f83ad7099bfe2d961c30e56c0cd8d7025e0c16ae3c38cd519eed3c364783343",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleDrive/GoogleDrive.yaml"
+    },
+    "OneDrive": {
+      "raw_count": 18,
+      "parsed_count": 18,
+      "sha256": "6f5902a52d1a0f48b69f7ebe021c4f14361e2c3f5426388923f2034740e60991",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OneDrive/OneDrive.yaml"
+    },
+    "Dropbox": {
+      "raw_count": 17,
+      "parsed_count": 17,
+      "sha256": "8dc09c2d1173000d9544cc7d0b1be5392d9d12887328b5c57e37804fdd8cbc2a",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dropbox/Dropbox.yaml"
+    },
+    "MEGA": {
+      "raw_count": 14,
+      "parsed_count": 14,
+      "sha256": "dd3ccf10d0ec9ce2c74387c02bacd50a726c2bc79c543a51727d850f07e313ed",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MEGA/MEGA.yaml"
+    },
+    "AWAvenueAds": {
+      "raw_count": 902,
+      "parsed_count": 902,
+      "sha256": "73463cb77495d1e3feec4aae8f64d9ddb5d95e048f342270a6e268e65a24a34b",
+      "source": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml"
+    },
+    "HageziAds": {
+      "raw_count": 83596,
+      "parsed_count": 83596,
+      "sha256": "5a04bb23e5b0d4d29e6683fea31dc986383420333f53e67bd659ac87b348461a",
+      "source": "https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/domains/light.txt"
+    },
+    "AntiAD": {
+      "raw_count": 100764,
+      "parsed_count": 100764,
+      "sha256": "1f6f27bf04c26769c297733bfeb10971b529eb5ff9166e92ed42a4f864b3c20d",
+      "source": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-clash.yaml"
+    },
+    "Spotify": {
+      "raw_count": 30,
+      "parsed_count": 30,
+      "sha256": "e74599390a87e5ed6da929f80be9c173cf3017e41b8f69362c2028d248875a79",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml"
+    },
+    "WhatsApp": {
+      "raw_count": 17,
+      "parsed_count": 17,
+      "sha256": "fce89bfff5101fee701336bb28934c7af7c570d1594fd5244e6db1743f0bb254",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Whatsapp/Whatsapp.yaml"
+    },
+    "tiktok": {
+      "raw_count": 32,
+      "parsed_count": 32,
+      "sha256": "c93113e0f7d84302868ae8a1a7bfd024dbc03e54c5953f5439d20ca9c04005b7",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml"
+    },
+    "netflix": {
+      "raw_count": 38,
+      "parsed_count": 38,
+      "sha256": "cfb49b76fabc96887c7da7336ecea9066727c1489d25d677baa4f4e7a79a05f3",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml"
+    },
+    "disney": {
+      "raw_count": 174,
+      "parsed_count": 174,
+      "sha256": "5788df2a9935ecdbacc06c87c3f9c7cc4ec39fe3d61aea1f33be66d79e6b5a3a",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml"
+    },
+    "primevideo": {
+      "raw_count": 26,
+      "parsed_count": 26,
+      "sha256": "393c6113b32767d9d5f3b62b65d1bec3d9a8d10aee41b225652350b73db5b256",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonPrimeVideo/AmazonPrimeVideo.yaml"
+    },
+    "google": {
+      "raw_count": 701,
+      "parsed_count": 701,
+      "sha256": "dfb4bf0a0095e48f024fbb7c31564a928e6c7d450b662aca9803119489a9237c",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml"
+    },
+    "apple": {
+      "raw_count": 165,
+      "parsed_count": 165,
+      "sha256": "a47d516880dcf65f51d3b40e6a71c33253e0774bdc4a7ec0a0d0a09a4dd522a2",
+      "source": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
+    },
+    "icloud": {
+      "raw_count": 53,
+      "parsed_count": 53,
+      "sha256": "f1fb7e9d17400071bf77d853b2a3148ccb6a13d785cb97e73f1693142682b23f",
+      "source": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
+    },
+    "DouYin": {
+      "raw_count": 13,
+      "parsed_count": 13,
+      "sha256": "fdfe20393b17988455f7715a8be15166b097c071551b938049874d39675dee41",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DouYin/DouYin.yaml"
+    },
+    "BiliBili": {
+      "raw_count": 129,
+      "parsed_count": 129,
+      "sha256": "fba635689995726aebbb522699f157f5dd910783950daa4bb475f167fe7b40de",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml"
+    },
+    "BaiDuTieBa": {
+      "raw_count": 32,
+      "parsed_count": 32,
+      "sha256": "572d5e8a9a14fb100a2c6f6631988df09070cd89d6d1c3dbc3c818dddf28a714",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaiDuTieBa/BaiDuTieBa.yaml"
+    },
+    "alibaba-domain": {
+      "raw_count": 1266,
+      "parsed_count": 1266,
+      "sha256": "0fb38e364c3a1662ecc8f97a19ad2e8adecbf6e5119ad653cc8ff35ea7a66122",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Alibaba/Alibaba_Domain.yaml"
+    },
+    "alibaba": {
+      "raw_count": 55,
+      "parsed_count": 55,
+      "sha256": "032960207f577289598d8153ae3e6e3d03f9a2e3f835496752c3c6b3c3fdaf97",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Alibaba/Alibaba.yaml"
+    },
+    "qcloud": {
+      "raw_count": 347,
+      "parsed_count": 347,
+      "sha256": "be337959196d01b309b41aa8e1b45c9b55672fb4d699a21526ad4717e3a8c5dc",
+      "source": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/qcloud.yaml"
+    },
+    "global": {
+      "raw_count": 35029,
+      "parsed_count": 35029,
+      "sha256": "118a9c506047bcf1a5f7ad090169d7769643aab503c56902196fd61cbb064a2a",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml"
+    },
+    "chinamax": {
+      "raw_count": 123958,
+      "parsed_count": 123958,
+      "sha256": "f06f33a68e26bd44fed2aae60ee3debe3c4623ad7a6c0dd561aba8670215bcad",
+      "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml"
+    },
+    "cn-ip": {
+      "raw_count": 9651,
+      "parsed_count": 9651,
+      "sha256": "2bc01bbaf32f235597d0edf035466735bc4867b9b65ad75b034779368ddf53a4",
+      "source": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.list"
+    }
+  },
+  "upstreams": {
+    "Scholar-China": {
+      "type": "file",
+      "url": null,
+      "path": "local/Scholar-China.yaml",
+      "sha256": "f0d196e44f004fc141a5b673293cdf825f73f2697d079a89b9bcfa1514b9cf13",
+      "raw_rules": 7
+    },
+    "Scholar-Foreign": {
+      "type": "file",
+      "url": null,
+      "path": "local/Scholar-Foreign.yaml",
+      "sha256": "02fe74a11b20cdfc23727a7209a0985f131d6ffbbe572d42bfb2656c5baa98b0",
+      "raw_rules": 3
+    },
+    "me": {
+      "type": "file",
+      "url": null,
+      "path": "local/me.yaml",
+      "sha256": "ce54bbe3e49cd4be37eeff2ce9719ce5cf01c1a6958b6de4855d77d734d65c0a",
+      "raw_rules": 15
+    },
+    "Lan": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lan/Lan_No_Resolve.yaml",
+      "path": "./ruleset/Lan_No_Resolve.yaml",
+      "sha256": "44687576f81a639540cd678d5717d43467508d8c80678efde07588610bda239c",
+      "raw_rules": 140
+    },
+    "private": {
+      "type": "http",
+      "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt",
+      "path": "./ruleset/private.yaml",
+      "sha256": "3a04b128200ef8097d73b1496cbb23d24bc1e05d42fffb09f07c51699efb00b2",
+      "raw_rules": 130
+    },
+    "Scholar": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Scholar/Scholar.yaml",
+      "path": "./ruleset/Scholar.yaml",
+      "sha256": "35ca7ffb814c4f55f5381fd1ed35f4e8ca732a3c79fb47921ff4232fea22ea19",
+      "raw_rules": 231
+    },
+    "AppleIntelligence": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/ddgksf2013/Filter/refs/heads/master/AppleIntelligence.list",
+      "path": "./ruleset/AppleIntelligence.list",
+      "sha256": "030ffa77d98148e7ea371e787582b5c1afab3f18263042b06bfa4f00b8a4d7c1",
+      "raw_rules": 10
+    },
+    "openai": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml",
+      "path": "./ruleset/openai.yaml",
+      "sha256": "cf66c50e7cfbe0aa0e9e249bfa8897d152ae35b38ab6db2936ef62860b7b61b4",
+      "raw_rules": 35
+    },
+    "claude": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Claude/Claude.yaml",
+      "path": "./ruleset/claude.yaml",
+      "sha256": "ef21df39005b17dbd84aa65a47162b36fb5e72754cd32384146474ed488df482",
+      "raw_rules": 3
+    },
+    "Anthropic": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anthropic/Anthropic.yaml",
+      "path": "./ruleset/Anthropic.yaml",
+      "sha256": "af16ff9b3d5d587f93fa1761292401c8cc716fd52e7263f8ced577b90d7507c5",
+      "raw_rules": 3
+    },
+    "gemini": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml",
+      "path": "./ruleset/gemini.yaml",
+      "sha256": "d76e9822f72a69860b7d3086db61bbbef53014c57e3dc12472150c62a4f6434b",
+      "raw_rules": 13
+    },
+    "AI": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/QuixoticHeart/rule-set/refs/heads/ruleset/meta/ai.list",
+      "path": "./ruleset/AI.list",
+      "sha256": "c9a3bc1b269b27c9a3ecc3460fc5f8c90ed1201db8c3057b283bf82ee24451a8",
+      "raw_rules": 217
+    },
+    "GoogleVoice": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleVoice/GoogleVoice.yaml",
+      "path": "./ruleset/GoogleVoice.yaml",
+      "sha256": "6c569656f01fa0acfc0966e644c2bf514dc53d6950d3e45448c233954588439d",
+      "raw_rules": 1
+    },
+    "Crypto": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Crypto/Crypto.yaml",
+      "path": "./rule-providers/crypto.yaml",
+      "sha256": "285c3e375d6e3db1e4af8249b9e7d2b83646a6e1165dda6d2400654a0933b733",
+      "raw_rules": 204
+    },
+    "IPCheck": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/iab0x00/ProxyRules/main/Rule/IPCheck.txt",
+      "path": "./ruleset/IPCheck.txt",
+      "sha256": "6ca841efc3f0e1e6d6d2312ab68db105eb1224bd7aa3b35b3320110fdc8ed285",
+      "raw_rules": 25
+    },
+    "paypal": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PayPal/PayPal.yaml",
+      "path": "./ruleset/paypal.yaml",
+      "sha256": "66c75e9ecff301097919cccb27a675251158e8d85e09c6c926995b465cab8a59",
+      "raw_rules": 247
+    },
+    "wechat": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeChat/WeChat_No_Resolve.yaml",
+      "path": "./ruleset/wechat.yaml",
+      "sha256": "deeaafece9d3b360f090705f978caf14308bcc72c20412b928c7731b4a9a56f1",
+      "raw_rules": 31
+    },
+    "cloudflare": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/LM-Firefly/Rules/master/Clash-RuleSet-Classical/PROXY/Cloudflare.yaml",
+      "path": "./ruleset/cloudflare.yaml",
+      "sha256": "9958ea2eb658e30f47843463348bce90a0990fc411a5b3ee20934c70db096b0b",
+      "raw_rules": 30
+    },
+    "AppleProxy": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleProxy/AppleProxy.yaml",
+      "path": "./ruleset/AppleProxy.yaml",
+      "sha256": "683103c41509c1f660c71d39ce5290e1a13a4176ec061822f4e8e83934afba4b",
+      "raw_rules": 40
+    },
+    "Telegram": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram_No_Resolve.yaml",
+      "path": "./ruleset/Telegram.yaml",
+      "sha256": "996651175d82cdc34e07c2429d5737ddbe15a5ed83e54dbaf84727a6f5927f92",
+      "raw_rules": 46
+    },
+    "github": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitHub/GitHub_No_Resolve.yaml",
+      "path": "./ruleset/github.yaml",
+      "sha256": "a2641ce2f10857831b600623f97d354e6f8db7b20dff175c5313c2c46e0b6867",
+      "raw_rules": 31
+    },
+    "youtube": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube_No_Resolve.yaml",
+      "path": "./ruleset/youtube.yaml",
+      "sha256": "7deacecc20077a39dc052d097806bfb8f89dc60970c02bfda3803edaedddaa55",
+      "raw_rules": 183
+    },
+    "GoogleEarth": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleEarth/GoogleEarth_No_Resolve.yaml",
+      "path": "./ruleset/GoogleEarth_No_Resolve.yaml",
+      "sha256": "afed267cf0c6a423761509a8555fcae07d8ee0a6b07131fd3fc3955d8856e3d8",
+      "raw_rules": 16
+    },
+    "Instagram": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Instagram/Instagram.yaml",
+      "path": "./ruleset/Instagram.yaml",
+      "sha256": "3ea6152876ff1c998b9434761898af1242bcc6bcaeaed74023910d9d08c64e39",
+      "raw_rules": 4
+    },
+    "Facebook": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Facebook/Facebook.yaml",
+      "path": "./ruleset/Facebook.yaml",
+      "sha256": "c82828bf136de47a26458f2303d3acf2a06aaca2a18c19e67f315387ef977ed0",
+      "raw_rules": 570
+    },
+    "Twitter": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Twitter/Twitter.yaml",
+      "path": "./rule-providers/twitter.yaml",
+      "sha256": "67c46c3988da5cdc387eacee945c2950464691af0e2746929455cd9295c3ff2b",
+      "raw_rules": 33
+    },
+    "Reddit": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Reddit/Reddit.yaml",
+      "path": "./rule-providers/reddit.yaml",
+      "sha256": "bf20bcd7b2f841eb9cb2170f7e52ba4437f897eb697ac9e3f4041e674eb4cf2e",
+      "raw_rules": 8
+    },
+    "Discord": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Discord/Discord.yaml",
+      "path": "./rule-providers/discord.yaml",
+      "sha256": "ce5e3cf18e7353fea35edce91f66e1dfa2a38331203b7fb245c535620d02bf8b",
+      "raw_rules": 29
+    },
+    "GoogleDrive": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleDrive/GoogleDrive.yaml",
+      "path": "./ruleset/GoogleDrive.yaml",
+      "sha256": "6f83ad7099bfe2d961c30e56c0cd8d7025e0c16ae3c38cd519eed3c364783343",
+      "raw_rules": 6
+    },
+    "OneDrive": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OneDrive/OneDrive.yaml",
+      "path": "./ruleset/OneDrive.yaml",
+      "sha256": "6f5902a52d1a0f48b69f7ebe021c4f14361e2c3f5426388923f2034740e60991",
+      "raw_rules": 18
+    },
+    "Dropbox": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dropbox/Dropbox.yaml",
+      "path": "./ruleset/Dropbox.yaml",
+      "sha256": "8dc09c2d1173000d9544cc7d0b1be5392d9d12887328b5c57e37804fdd8cbc2a",
+      "raw_rules": 17
+    },
+    "MEGA": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MEGA/MEGA.yaml",
+      "path": "./ruleset/MEGA.yaml",
+      "sha256": "dd3ccf10d0ec9ce2c74387c02bacd50a726c2bc79c543a51727d850f07e313ed",
+      "raw_rules": 14
+    },
+    "AWAvenueAds": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml",
+      "path": "./ruleset/AWAvenueAds.yaml",
+      "sha256": "73463cb77495d1e3feec4aae8f64d9ddb5d95e048f342270a6e268e65a24a34b",
+      "raw_rules": 902
+    },
+    "HageziAds": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/domains/light.txt",
+      "path": "./ruleset/HageziAds.txt",
+      "sha256": "5a04bb23e5b0d4d29e6683fea31dc986383420333f53e67bd659ac87b348461a",
+      "raw_rules": 83596
+    },
+    "AntiAD": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-clash.yaml",
+      "path": "./ruleset/AntiAD.yaml",
+      "sha256": "1f6f27bf04c26769c297733bfeb10971b529eb5ff9166e92ed42a4f864b3c20d",
+      "raw_rules": 100764
+    },
+    "Spotify": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml",
+      "path": "./ruleset/Spotify.yaml",
+      "sha256": "e74599390a87e5ed6da929f80be9c173cf3017e41b8f69362c2028d248875a79",
+      "raw_rules": 30
+    },
+    "WhatsApp": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Whatsapp/Whatsapp.yaml",
+      "path": "./ruleset/WhatsApp.yaml",
+      "sha256": "fce89bfff5101fee701336bb28934c7af7c570d1594fd5244e6db1743f0bb254",
+      "raw_rules": 17
+    },
+    "tiktok": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml",
+      "path": "./ruleset/tiktok.yaml",
+      "sha256": "c93113e0f7d84302868ae8a1a7bfd024dbc03e54c5953f5439d20ca9c04005b7",
+      "raw_rules": 32
+    },
+    "netflix": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml",
+      "path": "./ruleset/netflix.yaml",
+      "sha256": "cfb49b76fabc96887c7da7336ecea9066727c1489d25d677baa4f4e7a79a05f3",
+      "raw_rules": 38
+    },
+    "disney": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml",
+      "path": "./ruleset/disney.yaml",
+      "sha256": "5788df2a9935ecdbacc06c87c3f9c7cc4ec39fe3d61aea1f33be66d79e6b5a3a",
+      "raw_rules": 174
+    },
+    "primevideo": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonPrimeVideo/AmazonPrimeVideo.yaml",
+      "path": "./ruleset/primevideo.yaml",
+      "sha256": "393c6113b32767d9d5f3b62b65d1bec3d9a8d10aee41b225652350b73db5b256",
+      "raw_rules": 26
+    },
+    "google": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml",
+      "path": "./ruleset/google.yaml",
+      "sha256": "dfb4bf0a0095e48f024fbb7c31564a928e6c7d450b662aca9803119489a9237c",
+      "raw_rules": 701
+    },
+    "apple": {
+      "type": "http",
+      "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt",
+      "path": "./ruleset/apple.yaml",
+      "sha256": "a47d516880dcf65f51d3b40e6a71c33253e0774bdc4a7ec0a0d0a09a4dd522a2",
+      "raw_rules": 165
+    },
+    "icloud": {
+      "type": "http",
+      "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt",
+      "path": "./ruleset/icloud.yaml",
+      "sha256": "f1fb7e9d17400071bf77d853b2a3148ccb6a13d785cb97e73f1693142682b23f",
+      "raw_rules": 53
+    },
+    "DouYin": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DouYin/DouYin.yaml",
+      "path": "./ruleset/DouYin.yaml",
+      "sha256": "fdfe20393b17988455f7715a8be15166b097c071551b938049874d39675dee41",
+      "raw_rules": 13
+    },
+    "BiliBili": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml",
+      "path": "./ruleset/BiliBili.yaml",
+      "sha256": "fba635689995726aebbb522699f157f5dd910783950daa4bb475f167fe7b40de",
+      "raw_rules": 129
+    },
+    "BaiDuTieBa": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaiDuTieBa/BaiDuTieBa.yaml",
+      "path": "./ruleset/BaiDuTieBa.yaml",
+      "sha256": "572d5e8a9a14fb100a2c6f6631988df09070cd89d6d1c3dbc3c818dddf28a714",
+      "raw_rules": 32
+    },
+    "alibaba-domain": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Alibaba/Alibaba_Domain.yaml",
+      "path": "./ruleset/alibaba-domain.yaml",
+      "sha256": "0fb38e364c3a1662ecc8f97a19ad2e8adecbf6e5119ad653cc8ff35ea7a66122",
+      "raw_rules": 1266
+    },
+    "alibaba": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Alibaba/Alibaba.yaml",
+      "path": "./ruleset/alibaba.yaml",
+      "sha256": "032960207f577289598d8153ae3e6e3d03f9a2e3f835496752c3c6b3c3fdaf97",
+      "raw_rules": 55
+    },
+    "qcloud": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/qcloud.yaml",
+      "path": "./ruleset/qcloud.yaml",
+      "sha256": "be337959196d01b309b41aa8e1b45c9b55672fb4d699a21526ad4717e3a8c5dc",
+      "raw_rules": 347
+    },
+    "global": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml",
+      "path": "./ruleset/global.yaml",
+      "sha256": "118a9c506047bcf1a5f7ad090169d7769643aab503c56902196fd61cbb064a2a",
+      "raw_rules": 35029
+    },
+    "chinamax": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml",
+      "path": "./ruleset/chinamax.yaml",
+      "sha256": "f06f33a68e26bd44fed2aae60ee3debe3c4623ad7a6c0dd561aba8670215bcad",
+      "raw_rules": 123958
+    },
+    "cn-ip": {
+      "type": "http",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.list",
+      "path": null,
+      "sha256": "2bc01bbaf32f235597d0edf035466735bc4867b9b65ad75b034779368ddf53a4",
+      "raw_rules": 9651
+    }
+  },
+  "asn_database": {
+    "release": "1788217997",
+    "prefixes": {
+      "GeoLite2-ASN-Blocks-IPv4.csv": 902,
+      "GeoLite2-ASN-Blocks-IPv6.csv": 429
+    }
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "route": {
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "direct-pre",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/direct-pre.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "ai",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/ai.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "direct-middle",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/direct-middle.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "overseas",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/overseas.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "ads",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/ads.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "direct-cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/direct-cn.srs",
+        "update_interval": "1d"
+      },
+      {
+        "type": "remote",
+        "tag": "direct-cn-ip",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/direct-cn-ip.srs",
+        "update_interval": "1d"
+      }
+    ],
+    "rules": [
+      {
+        "ip_cidr": [
+          "0.0.0.0/32"
+        ],
+        "action": "reject",
+        "method": "default"
+      },
+      {
+        "rule_set": [
+          "direct-pre"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "ai"
+        ],
+        "action": "route",
+        "outbound": "ai"
+      },
+      {
+        "rule_set": [
+          "direct-middle"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "overseas"
+        ],
+        "action": "route",
+        "outbound": "overseas"
+      },
+      {
+        "rule_set": [
+          "ads"
+        ],
+        "action": "reject",
+        "method": "drop"
+      },
+      {
+        "rule_set": [
+          "direct-cn"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "direct-cn-ip"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      }
+    ],
+    "final": "overseas"
+  }
+}

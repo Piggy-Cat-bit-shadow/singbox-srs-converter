@@ -1,0 +1,33 @@
+name: build
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 3 * * *"
+  push:
+    branches: [main]
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.txt
+      - name: install sing-box
+        run: |
+          url=$(curl -fsSL https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.assets[] | select(.name | endswith("linux-amd64.tar.gz")) | .browser_download_url' | head -1)
+          curl -fsSL "$url" -o /tmp/sing-box.tgz
+          tar -xzf /tmp/sing-box.tgz -C /tmp
+          sudo install /tmp/sing-box-*/sing-box /usr/local/bin/sing-box
+      - run: sing-box version
+      - run: python -m unittest discover -s tests
+      - run: python scripts/build.py examples/my-rules.yaml
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: build: update generated sing-box SRS
+          file_pattern: dist

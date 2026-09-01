@@ -1,0 +1,4 @@
+policy_map:
+  DIRECT: direct
+  "🤖 AI": ai
+  "⚡ 海外高速": overseas
