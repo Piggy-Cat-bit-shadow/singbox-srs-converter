@@ -23,8 +23,8 @@ class BuildTests(unittest.TestCase):
         import re
         one=re.compile(parse('*.example.com','domain','x')[0].value)
         self.assertTrue(one.match('a.example.com')); self.assertFalse(one.match('a.b.example.com'))
-        suffix=re.compile(parse('+.example.com','domain','x')[0].value)
-        self.assertTrue(suffix.match('example.com')); self.assertTrue(suffix.match('a.b.example.com'))
+        suffix=parse('+.example.com','domain','x')[0]
+        self.assertEqual(suffix.kind,'domain_suffix'); self.assertEqual(suffix.value,'example.com')
         child=re.compile(parse('.example.com','domain','x')[0].value)
         self.assertFalse(child.match('example.com')); self.assertTrue(child.match('a.example.com'))
     def test_adjacent_cidr_not_collapsed(self):
