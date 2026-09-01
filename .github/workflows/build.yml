@@ -31,6 +31,8 @@ jobs:
           test "$(python -c 'import json; print(json.load(open("dist/report.json"))["providers"])')" = 53
           test "$(python -c 'import json; print(json.load(open("dist/report.json"))["groups"])')" = 7
           test "$(python -c 'import json; print(json.load(open("dist/report.json"))["unsupported_rules"])')" = 0
+          test "$(python -c 'import json; print(json.load(open("dist/semantic-audit.json"))["failed"])')" = 0
+          test "$(python -c 'import json; x=json.load(open("dist/semantic-audit.json")); print(x["passed"] == x["total"])')" = True
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "build: update generated sing-box SRS"

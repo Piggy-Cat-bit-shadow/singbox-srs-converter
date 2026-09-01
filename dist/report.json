@@ -1,74 +1,77 @@
 {
   "version": 1,
-  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 linux/amd64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0,with_purego\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: disabled",
+  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 darwin/arm64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: enabled",
   "providers": 53,
   "groups": 7,
   "raw_rules": 359338,
   "mapped_original_rules": 359338,
   "unsupported_rules": 0,
+  "semantic_limitations": [
+    "Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted."
+  ],
   "asn_rules": 9,
   "asn_expanded_prefixes": 1331,
   "ip_rules_no_resolve": 243,
   "ip_rules_without_no_resolve": 23656,
   "before_dedup_matchers": 360854,
-  "after_dedup_matchers": 303812,
-  "removed_matchers": 57042,
-  "removed_percent": 15.81,
+  "after_dedup_matchers": 356990,
+  "removed_matchers": 3864,
+  "removed_percent": 1.07,
   "dedup": {
     "exact_duplicates_removed": 3864,
-    "domain_covered_by_suffix": 47244,
-    "suffix_covered_by_parent_suffix": 5838,
+    "domain_covered_by_suffix": 0,
+    "suffix_covered_by_parent_suffix": 0,
     "ipcidr_duplicates_removed": 0,
-    "ipcidr_covered_by_parent": 96
+    "ipcidr_covered_by_parent": 0
   },
   "groups_detail": {
     "direct-pre": {
       "provider_count": 2,
       "raw_rules": 270,
       "before_dedup": 270,
-      "after_dedup": 150,
-      "removed": 120,
-      "srs_bytes": 810
+      "after_dedup": 153,
+      "removed": 117,
+      "srs_bytes": 1035
     },
     "ai": {
       "provider_count": 13,
       "raw_rules": 843,
       "before_dedup": 1926,
-      "after_dedup": 1867,
-      "removed": 59,
-      "srs_bytes": 13543
+      "after_dedup": 1892,
+      "removed": 34,
+      "srs_bytes": 13086
     },
     "direct-middle": {
       "provider_count": 5,
       "raw_rules": 603,
       "before_dedup": 796,
-      "after_dedup": 732,
-      "removed": 64,
-      "srs_bytes": 4629
+      "after_dedup": 796,
+      "removed": 0,
+      "srs_bytes": 4823
     },
     "overseas": {
       "provider_count": 23,
       "raw_rules": 37256,
       "before_dedup": 37303,
-      "after_dedup": 29680,
-      "removed": 7623,
-      "srs_bytes": 175640
+      "after_dedup": 35385,
+      "removed": 1918,
+      "srs_bytes": 229568
     },
     "ads": {
       "provider_count": 3,
       "raw_rules": 185262,
       "before_dedup": 185262,
-      "after_dedup": 137607,
-      "removed": 47655,
-      "srs_bytes": 1035638
+      "after_dedup": 184727,
+      "removed": 535,
+      "srs_bytes": 1536818
     },
     "direct-cn": {
       "provider_count": 6,
       "raw_rules": 125453,
       "before_dedup": 125646,
-      "after_dedup": 124125,
-      "removed": 1521,
-      "srs_bytes": 503089
+      "after_dedup": 124386,
+      "removed": 1260,
+      "srs_bytes": 660306
     },
     "direct-cn-ip": {
       "provider_count": 1,
@@ -76,7 +79,7 @@
       "before_dedup": 9651,
       "after_dedup": 9651,
       "removed": 0,
-      "srs_bytes": 36460
+      "srs_bytes": 55647
     }
   },
   "providers_detail": {
@@ -779,142 +782,213 @@
       "GeoLite2-ASN-Blocks-IPv6.csv": 429
     }
   },
-  "semantic_audit": [
-    {
-      "domain": "youtube.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "www.youtube.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "music.youtube.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "ads.youtube.com",
-      "matched_groups": [
-        "overseas",
-        "ads"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "youtubei.googleapis.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "youtube.googleapis.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "googlevideo.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "r1---sn.googlevideo.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "ytimg.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "i.ytimg.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "ggpht.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "yt3.ggpht.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "chat.openai.com",
-      "matched_groups": [
-        "ai"
-      ],
-      "first_match": "ai"
-    },
-    {
-      "domain": "api.telegram.org",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "github.com",
-      "matched_groups": [
-        "overseas"
-      ],
-      "first_match": "overseas"
-    },
-    {
-      "domain": "icloud.com",
-      "matched_groups": [
-        "direct-middle",
-        "overseas"
-      ],
-      "first_match": "direct-middle"
-    },
-    {
-      "domain": "wechat.com",
-      "matched_groups": [
-        "direct-middle",
-        "direct-cn"
-      ],
-      "first_match": "direct-middle"
-    },
-    {
-      "domain": "douyin.com",
-      "matched_groups": [
-        "direct-cn"
-      ],
-      "first_match": "direct-cn"
-    },
-    {
-      "domain": "example-ad.invalid",
-      "matched_groups": [
-        "direct-pre"
-      ],
-      "first_match": "direct-pre"
-    }
-  ]
+  "semantic_audit": {
+    "version": 1,
+    "route_order": [
+      "direct-pre",
+      "ai",
+      "direct-middle",
+      "overseas",
+      "ads",
+      "direct-cn",
+      "direct-cn-ip"
+    ],
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "cases": [
+      {
+        "domain": "youtube.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "www.youtube.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "music.youtube.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "ads.youtube.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas",
+          "ads"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "youtubei.googleapis.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "youtube.googleapis.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "googlevideo.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "r1---sn.googlevideo.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "ytimg.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "i.ytimg.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "ggpht.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "yt3.ggpht.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "chat.openai.com",
+        "expected": "ai",
+        "matched_groups": [
+          "ai"
+        ],
+        "first_match": "ai",
+        "passed": true
+      },
+      {
+        "domain": "api.telegram.org",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "github.com",
+        "expected": "overseas",
+        "matched_groups": [
+          "overseas"
+        ],
+        "first_match": "overseas",
+        "passed": true
+      },
+      {
+        "domain": "icloud.com",
+        "expected": "direct-middle",
+        "matched_groups": [
+          "direct-middle",
+          "overseas"
+        ],
+        "first_match": "direct-middle",
+        "passed": true
+      },
+      {
+        "domain": "wechat.com",
+        "expected": "direct-middle",
+        "matched_groups": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "first_match": "direct-middle",
+        "passed": true
+      },
+      {
+        "domain": "douyin.com",
+        "expected": "direct-cn",
+        "matched_groups": [
+          "direct-cn"
+        ],
+        "first_match": "direct-cn",
+        "passed": true
+      },
+      {
+        "domain": "000dn.com",
+        "expected": "ads",
+        "matched_groups": [
+          "ads"
+        ],
+        "first_match": "ads",
+        "passed": true
+      },
+      {
+        "domain": "001union.com",
+        "expected": "ads",
+        "matched_groups": [
+          "ads"
+        ],
+        "first_match": "ads",
+        "passed": true
+      },
+      {
+        "domain": "002777.xyz",
+        "expected": "ads",
+        "matched_groups": [
+          "ads"
+        ],
+        "first_match": "ads",
+        "passed": true
+      }
+    ]
+  }
 }

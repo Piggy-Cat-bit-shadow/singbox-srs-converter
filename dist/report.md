@@ -12,6 +12,6 @@
 | asn_rules | 9 |
 | asn_expanded_prefixes | 1331 |
 | before_dedup_matchers | 360854 |
-| after_dedup_matchers | 303812 |
-| removed_matchers | 57042 |
-| removed_percent | 15.81 |
+| after_dedup_matchers | 356990 |
+| removed_matchers | 3864 |
+| removed_percent | 1.07 |

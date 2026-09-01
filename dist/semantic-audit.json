@@ -9,142 +9,201 @@
     "direct-cn",
     "direct-cn-ip"
   ],
+  "total": 21,
+  "passed": 21,
+  "failed": 0,
   "cases": [
     {
       "domain": "youtube.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "www.youtube.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "music.youtube.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "ads.youtube.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas",
         "ads"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "youtubei.googleapis.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "youtube.googleapis.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "googlevideo.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "r1---sn.googlevideo.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "ytimg.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "i.ytimg.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "ggpht.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "yt3.ggpht.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "chat.openai.com",
+      "expected": "ai",
       "matched_groups": [
         "ai"
       ],
-      "first_match": "ai"
+      "first_match": "ai",
+      "passed": true
     },
     {
       "domain": "api.telegram.org",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "github.com",
+      "expected": "overseas",
       "matched_groups": [
         "overseas"
       ],
-      "first_match": "overseas"
+      "first_match": "overseas",
+      "passed": true
     },
     {
       "domain": "icloud.com",
+      "expected": "direct-middle",
       "matched_groups": [
         "direct-middle",
         "overseas"
       ],
-      "first_match": "direct-middle"
+      "first_match": "direct-middle",
+      "passed": true
     },
     {
       "domain": "wechat.com",
+      "expected": "direct-middle",
       "matched_groups": [
         "direct-middle",
         "direct-cn"
       ],
-      "first_match": "direct-middle"
+      "first_match": "direct-middle",
+      "passed": true
     },
     {
       "domain": "douyin.com",
+      "expected": "direct-cn",
       "matched_groups": [
         "direct-cn"
       ],
-      "first_match": "direct-cn"
+      "first_match": "direct-cn",
+      "passed": true
     },
     {
-      "domain": "example-ad.invalid",
+      "domain": "000dn.com",
+      "expected": "ads",
       "matched_groups": [
-        "direct-pre"
+        "ads"
       ],
-      "first_match": "direct-pre"
+      "first_match": "ads",
+      "passed": true
+    },
+    {
+      "domain": "001union.com",
+      "expected": "ads",
+      "matched_groups": [
+        "ads"
+      ],
+      "first_match": "ads",
+      "passed": true
+    },
+    {
+      "domain": "002777.xyz",
+      "expected": "ads",
+      "matched_groups": [
+        "ads"
+      ],
+      "first_match": "ads",
+      "passed": true
     }
   ]
 }
