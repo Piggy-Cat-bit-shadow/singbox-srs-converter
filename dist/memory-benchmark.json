@@ -1,18 +1,55 @@
 {
   "version": 1,
+  "method": "sing-box run with local binary SRS, loopback mixed inbound, 3 runs; median reported",
   "platform": "Linux 6.17.0-1022-azure x86_64",
   "rss_unit": "kb",
   "rss_comparable": true,
   "legacy": {
-    "max_rss": 611620,
+    "max_rss": 248624,
     "rss_unit": "kb",
-    "init_ms": 1189.12
+    "init_ms": 1414.35,
+    "runs": 3,
+    "samples": [
+      {
+        "max_rss": 250808,
+        "init_ms": 1414.35
+      },
+      {
+        "max_rss": 248624,
+        "init_ms": 1314.41
+      },
+      {
+        "max_rss": 247732,
+        "init_ms": 1416.24
+      }
+    ]
   },
   "optimized": {
-    "max_rss": 66472,
+    "max_rss": 64988,
     "rss_unit": "kb",
-    "init_ms": 66.97
+    "init_ms": 101.31,
+    "runs": 3,
+    "samples": [
+      {
+        "max_rss": 64988,
+        "init_ms": 101.27
+      },
+      {
+        "max_rss": 65440,
+        "init_ms": 101.34
+      },
+      {
+        "max_rss": 64572,
+        "init_ms": 101.31
+      }
+    ]
   },
-  "rss_reduction_percent": 89.13,
-  "init_reduction_percent": 94.37
+  "legacy_max_rss_kb": 248624,
+  "optimized_max_rss_kb": 64988,
+  "median_max_rss_kb": 64988,
+  "legacy_init_ms": 1414.35,
+  "optimized_init_ms": 101.31,
+  "median_init_ms": 101.31,
+  "rss_reduction_percent": 73.86,
+  "init_reduction_percent": 92.84
 }
