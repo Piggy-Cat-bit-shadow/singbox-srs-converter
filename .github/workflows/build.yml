@@ -1,10 +1,5 @@
 name: build
-"on":
-  workflow_dispatch:
-  schedule:
-    - cron: "25 3 * * *"
-  push:
-    branches: [main]
+on: [workflow_dispatch, push]
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
