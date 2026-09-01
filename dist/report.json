@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 linux/amd64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0,with_purego\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: disabled",
+  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 darwin/arm64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: enabled",
   "providers": 53,
   "groups": 7,
   "segments": [
@@ -123,76 +123,252 @@
     "Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted."
   ],
   "asn_rules": 9,
-  "asn_expanded_prefixes": 1331,
+  "asn_expanded_prefixes": 1254,
   "ip_rules_no_resolve": 243,
-  "ip_rules_without_no_resolve": 23655,
-  "before_dedup_matchers": 360993,
-  "after_dedup_matchers": 357129,
-  "removed_matchers": 3864,
-  "removed_percent": 1.07,
+  "ip_rules_without_no_resolve": 23578,
+  "before_dedup_matchers": 360916,
+  "after_dedup_matchers": 303830,
+  "removed_matchers": 57086,
+  "removed_percent": 15.82,
+  "runtime_structure_before": {
+    "headless_rules": 360916,
+    "matcher_values": 360916
+  },
+  "runtime_structure_after": {
+    "headless_rules": 13,
+    "matcher_values": 303830
+  },
+  "runtime_structure": {
+    "unaggregated_headless_rules": 360916,
+    "aggregated_headless_rules": 13,
+    "reduction": 360903,
+    "reduction_percent": 100.0
+  },
   "dedup": {
     "exact_duplicates_removed": 3864,
-    "domain_covered_by_suffix": 0,
-    "suffix_covered_by_parent_suffix": 0,
+    "domain_covered_by_suffix": 47284,
+    "suffix_covered_by_parent_suffix": 5838,
     "ipcidr_duplicates_removed": 0,
-    "ipcidr_covered_by_parent": 0
+    "ipcidr_covered_by_parent": 0,
+    "ip_collapse_reduction": 100
   },
   "groups_detail": {
     "direct-pre": {
       "provider_count": 2,
       "raw_rules": 270,
-      "before_dedup": 270,
-      "after_dedup": 153,
-      "removed": 117,
-      "srs_bytes": 1035
+      "normalized_matchers": 270,
+      "optimized_matchers": 150,
+      "before_dedup_matchers": 270,
+      "after_dedup_matchers": 150,
+      "dedup_removed": 120,
+      "unaggregated_headless_rules": 270,
+      "aggregated_headless_rules": 2,
+      "matcher_values_before": 270,
+      "matcher_values_after": 150,
+      "matcher_kinds_before": {
+        "domain": 19,
+        "domain_suffix": 233,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 18,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 9,
+        "domain_suffix": 123,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 18,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 1240,
+      "srs_bytes_after": 812
     },
     "ai": {
       "provider_count": 13,
       "raw_rules": 843,
-      "before_dedup": 1926,
-      "after_dedup": 1892,
-      "removed": 34,
-      "srs_bytes": 13086
+      "normalized_matchers": 1849,
+      "optimized_matchers": 1790,
+      "before_dedup_matchers": 1849,
+      "after_dedup_matchers": 1790,
+      "dedup_removed": 59,
+      "unaggregated_headless_rules": 1849,
+      "aggregated_headless_rules": 2,
+      "matcher_values_before": 1849,
+      "matcher_values_after": 1790,
+      "matcher_kinds_before": {
+        "domain": 96,
+        "domain_suffix": 722,
+        "domain_keyword": 17,
+        "domain_regex": 1,
+        "ip_cidr": 1009,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 72,
+        "domain_suffix": 688,
+        "domain_keyword": 16,
+        "domain_regex": 1,
+        "ip_cidr": 1009,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 13677,
+      "srs_bytes_after": 13080
     },
     "direct-middle": {
       "provider_count": 5,
       "raw_rules": 603,
-      "before_dedup": 796,
-      "after_dedup": 796,
-      "removed": 0,
-      "srs_bytes": 4823
+      "normalized_matchers": 796,
+      "optimized_matchers": 732,
+      "before_dedup_matchers": 796,
+      "after_dedup_matchers": 732,
+      "dedup_removed": 64,
+      "unaggregated_headless_rules": 796,
+      "aggregated_headless_rules": 2,
+      "matcher_values_before": 796,
+      "matcher_values_after": 732,
+      "matcher_kinds_before": {
+        "domain": 8,
+        "domain_suffix": 594,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 194,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 7,
+        "domain_suffix": 531,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 194,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 5372,
+      "srs_bytes_after": 4631
     },
     "overseas": {
       "provider_count": 23,
       "raw_rules": 37263,
-      "before_dedup": 37310,
-      "after_dedup": 35392,
-      "removed": 1918,
-      "srs_bytes": 229614
+      "normalized_matchers": 37310,
+      "optimized_matchers": 29688,
+      "before_dedup_matchers": 37310,
+      "after_dedup_matchers": 29688,
+      "dedup_removed": 7622,
+      "unaggregated_headless_rules": 37310,
+      "aggregated_headless_rules": 3,
+      "matcher_values_before": 37310,
+      "matcher_values_after": 29688,
+      "matcher_kinds_before": {
+        "domain": 152,
+        "domain_suffix": 36836,
+        "domain_keyword": 60,
+        "domain_regex": 0,
+        "ip_cidr": 239,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 129,
+        "domain_suffix": 29312,
+        "domain_keyword": 44,
+        "domain_regex": 0,
+        "ip_cidr": 181,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 240065,
+      "srs_bytes_after": 175478
     },
     "ads": {
       "provider_count": 3,
       "raw_rules": 185475,
-      "before_dedup": 185475,
-      "after_dedup": 184940,
-      "removed": 535,
-      "srs_bytes": 1538755
+      "normalized_matchers": 185475,
+      "optimized_matchers": 137780,
+      "before_dedup_matchers": 185475,
+      "after_dedup_matchers": 137780,
+      "dedup_removed": 47695,
+      "unaggregated_headless_rules": 185475,
+      "aggregated_headless_rules": 1,
+      "matcher_values_before": 185475,
+      "matcher_values_after": 137780,
+      "matcher_kinds_before": {
+        "domain": 84483,
+        "domain_suffix": 100987,
+        "domain_keyword": 5,
+        "domain_regex": 0,
+        "ip_cidr": 0,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 36801,
+        "domain_suffix": 100974,
+        "domain_keyword": 5,
+        "domain_regex": 0,
+        "ip_cidr": 0,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 1543089,
+      "srs_bytes_after": 1036511
     },
     "direct-cn": {
       "provider_count": 6,
       "raw_rules": 125372,
-      "before_dedup": 125565,
-      "after_dedup": 124305,
-      "removed": 1260,
-      "srs_bytes": 660803
+      "normalized_matchers": 125565,
+      "optimized_matchers": 124039,
+      "before_dedup_matchers": 125565,
+      "after_dedup_matchers": 124039,
+      "dedup_removed": 1526,
+      "unaggregated_headless_rules": 125565,
+      "aggregated_headless_rules": 2,
+      "matcher_values_before": 125565,
+      "matcher_values_after": 124039,
+      "matcher_kinds_before": {
+        "domain": 354,
+        "domain_suffix": 112467,
+        "domain_keyword": 13,
+        "domain_regex": 0,
+        "ip_cidr": 12710,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 268,
+        "domain_suffix": 111159,
+        "domain_keyword": 13,
+        "domain_regex": 0,
+        "ip_cidr": 12585,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 667673,
+      "srs_bytes_after": 502483
     },
     "direct-cn-ip": {
       "provider_count": 1,
       "raw_rules": 9651,
-      "before_dedup": 9651,
-      "after_dedup": 9651,
-      "removed": 0,
-      "srs_bytes": 55647
+      "normalized_matchers": 9651,
+      "optimized_matchers": 9651,
+      "before_dedup_matchers": 9651,
+      "after_dedup_matchers": 9651,
+      "dedup_removed": 0,
+      "unaggregated_headless_rules": 9651,
+      "aggregated_headless_rules": 1,
+      "matcher_values_before": 9651,
+      "matcher_values_after": 9651,
+      "matcher_kinds_before": {
+        "domain": 0,
+        "domain_suffix": 0,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 9651,
+        "source_ip_cidr": 0
+      },
+      "matcher_kinds_after": {
+        "domain": 0,
+        "domain_suffix": 0,
+        "domain_keyword": 0,
+        "domain_regex": 0,
+        "ip_cidr": 9651,
+        "source_ip_cidr": 0
+      },
+      "srs_bytes_before": 55647,
+      "srs_bytes_after": 36460
     }
   },
   "providers_detail": {
@@ -889,10 +1065,10 @@
     }
   },
   "asn_database": {
-    "release": "1788217997",
+    "release": "1788299366",
     "prefixes": {
-      "GeoLite2-ASN-Blocks-IPv4.csv": 902,
-      "GeoLite2-ASN-Blocks-IPv6.csv": 429
+      "GeoLite2-ASN-Blocks-IPv4.csv": 901,
+      "GeoLite2-ASN-Blocks-IPv6.csv": 353
     }
   },
   "semantic_audit": {
@@ -1104,6 +1280,1687 @@
       }
     ]
   },
+  "sampled_legacy_optimized_parity": {
+    "total": 127,
+    "passed": 127,
+    "failed": 0,
+    "cases": [
+      {
+        "provider": "Scholar-China",
+        "kind": "domain_suffix",
+        "value": "probe.cnki.net",
+        "legacy_matches": [
+          "direct-middle",
+          "overseas",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "overseas",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Scholar-Foreign",
+        "kind": "domain_suffix",
+        "value": "probe.clinicaltrials.gov",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "me",
+        "kind": "domain_suffix",
+        "value": "probe.giffgaff.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "me",
+        "kind": "domain",
+        "value": "accounts.google.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Lan",
+        "kind": "domain",
+        "value": "asusrouter.com",
+        "legacy_matches": [
+          "direct-pre"
+        ],
+        "optimized_matches": [
+          "direct-pre"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Lan",
+        "kind": "domain_suffix",
+        "value": "probe.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa",
+        "legacy_matches": [
+          "direct-pre"
+        ],
+        "optimized_matches": [
+          "direct-pre"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Lan",
+        "kind": "ipv4",
+        "value": "0.0.0.0",
+        "legacy_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Lan",
+        "kind": "ipv6",
+        "value": "::",
+        "legacy_matches": [
+          "direct-pre"
+        ],
+        "optimized_matches": [
+          "direct-pre"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "private",
+        "kind": "domain",
+        "value": "instant.arubanetworks.com",
+        "legacy_matches": [
+          "direct-pre"
+        ],
+        "optimized_matches": [
+          "direct-pre"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "private",
+        "kind": "domain_suffix",
+        "value": "probe.internal",
+        "legacy_matches": [
+          "direct-pre"
+        ],
+        "optimized_matches": [
+          "direct-pre"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Scholar",
+        "kind": "domain",
+        "value": "scholar.google.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Scholar",
+        "kind": "domain_suffix",
+        "value": "probe.1lib.cloud",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AppleIntelligence",
+        "kind": "domain_suffix",
+        "value": "probe.gateway.icloud.com",
+        "legacy_matches": [
+          "ai",
+          "direct-middle",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "direct-middle",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "openai",
+        "kind": "domain",
+        "value": "browser-intake-datadoghq.com",
+        "legacy_matches": [
+          "ai",
+          "ads"
+        ],
+        "optimized_matches": [
+          "ai",
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "openai",
+        "kind": "domain_suffix",
+        "value": "probe.ai.com",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "openai",
+        "kind": "domain_keyword",
+        "value": "probe-openai.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "openai",
+        "kind": "ipv4",
+        "value": "24.199.123.28",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "openai",
+        "kind": "ipv6",
+        "value": "2001:678:580::",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "claude",
+        "kind": "domain",
+        "value": "cdn.usefathom.com",
+        "legacy_matches": [
+          "ai",
+          "ads"
+        ],
+        "optimized_matches": [
+          "ai",
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "claude",
+        "kind": "domain_suffix",
+        "value": "probe.anthropic.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Anthropic",
+        "kind": "domain",
+        "value": "servd-anthropic-website.b-cdn.net",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Anthropic",
+        "kind": "domain_suffix",
+        "value": "probe.anthropic.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "gemini",
+        "kind": "domain",
+        "value": "ai.google.dev",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "gemini",
+        "kind": "domain_suffix",
+        "value": "probe.bard.google.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "gemini",
+        "kind": "domain_keyword",
+        "value": "probe-colab.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AI",
+        "kind": "domain",
+        "value": "7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AI",
+        "kind": "domain_suffix",
+        "value": "probe.agentclientprotocol.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AI",
+        "kind": "domain_keyword",
+        "value": "probe-alkalimakersuite-pa.clients6.google.com.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "GoogleVoice",
+        "kind": "domain",
+        "value": "lens.l.google.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Crypto",
+        "kind": "domain",
+        "value": "token-api.metaswap.codefi.network",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Crypto",
+        "kind": "domain_suffix",
+        "value": "probe.1inch.io",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Crypto",
+        "kind": "domain_keyword",
+        "value": "probe-binance.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "IPCheck",
+        "kind": "domain",
+        "value": "ip-scan.adspower.net",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "IPCheck",
+        "kind": "domain_suffix",
+        "value": "probe.addr.tools",
+        "legacy_matches": [
+          "ai"
+        ],
+        "optimized_matches": [
+          "ai"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "paypal",
+        "kind": "domain_suffix",
+        "value": "probe.account-paypal.info",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "paypal",
+        "kind": "domain_keyword",
+        "value": "probe-paypal.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "wechat",
+        "kind": "domain",
+        "value": "apd-pcdnwxlogin.teg.tencent-cloud.net",
+        "legacy_matches": [
+          "direct-middle",
+          "ads",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "ads",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "wechat",
+        "kind": "domain_suffix",
+        "value": "probe.iot-tencent.com",
+        "legacy_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "wechat",
+        "kind": "ipv4",
+        "value": "1.12.0.0",
+        "legacy_matches": [
+          "direct-middle",
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "wechat",
+        "kind": "ipv6",
+        "value": "240d:c000:1000::",
+        "legacy_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "domain_suffix",
+        "value": "probe.cf-ipfs.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AppleProxy",
+        "kind": "domain",
+        "value": "api-glb-sea.smoot.apple.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AppleProxy",
+        "kind": "domain_suffix",
+        "value": "probe.apple-dns.net",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Telegram",
+        "kind": "domain",
+        "value": "api.imem.app",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Telegram",
+        "kind": "domain_suffix",
+        "value": "probe.cdn-telegram.org",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Telegram",
+        "kind": "domain_keyword",
+        "value": "probe-nicegram.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Telegram",
+        "kind": "ipv4",
+        "value": "109.239.140.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Telegram",
+        "kind": "ipv6",
+        "value": "2001:67c:4e8::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "github",
+        "kind": "domain_suffix",
+        "value": "probe.atom.io",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "github",
+        "kind": "domain_keyword",
+        "value": "probe-github.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "youtube",
+        "kind": "domain_suffix",
+        "value": "probe.ggpht.cn",
+        "legacy_matches": [
+          "overseas",
+          "ads",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "overseas",
+          "ads",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "youtube",
+        "kind": "domain_keyword",
+        "value": "probe-youtube.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "youtube",
+        "kind": "ipv4",
+        "value": "172.110.32.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "youtube",
+        "kind": "ipv6",
+        "value": "2620:120:e000::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "GoogleEarth",
+        "kind": "domain_suffix",
+        "value": "probe.earth-pa.clients6.google.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Instagram",
+        "kind": "domain_suffix",
+        "value": "probe.cdninstagram.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Instagram",
+        "kind": "domain_keyword",
+        "value": "probe-instagram.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Facebook",
+        "kind": "domain_suffix",
+        "value": "probe.aboutfacebook.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Facebook",
+        "kind": "domain_keyword",
+        "value": "probe-facebook.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Facebook",
+        "kind": "ipv4",
+        "value": "108.168.176.192",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Facebook",
+        "kind": "ipv6",
+        "value": "2620:0:1c00::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Twitter",
+        "kind": "domain_suffix",
+        "value": "probe.ads-twitter.com",
+        "legacy_matches": [
+          "overseas",
+          "ads"
+        ],
+        "optimized_matches": [
+          "overseas",
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Twitter",
+        "kind": "domain_keyword",
+        "value": "probe-twitter.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Twitter",
+        "kind": "ipv4",
+        "value": "192.133.76.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Reddit",
+        "kind": "domain_suffix",
+        "value": "probe.redd.it",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Discord",
+        "kind": "domain_suffix",
+        "value": "probe.airhorn.solutions",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "GoogleDrive",
+        "kind": "domain",
+        "value": "www.googleapis.com",
+        "legacy_matches": [
+          "ai",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "ai",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "GoogleDrive",
+        "kind": "domain_suffix",
+        "value": "probe.docs.google.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "OneDrive",
+        "kind": "domain_suffix",
+        "value": "probe.1drv.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "OneDrive",
+        "kind": "domain_keyword",
+        "value": "probe-1drv.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Dropbox",
+        "kind": "domain_suffix",
+        "value": "probe.db.tt",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "MEGA",
+        "kind": "domain_suffix",
+        "value": "probe.mega.co.nz",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "MEGA",
+        "kind": "ipv4",
+        "value": "185.206.24.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "MEGA",
+        "kind": "ipv6",
+        "value": "2a0b:e40:1::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AWAvenueAds",
+        "kind": "domain",
+        "value": "1500020991.vodplayer.wxamedia.com",
+        "legacy_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AWAvenueAds",
+        "kind": "domain_suffix",
+        "value": "probe.1rtb.com",
+        "legacy_matches": [
+          "ads"
+        ],
+        "optimized_matches": [
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AWAvenueAds",
+        "kind": "domain_keyword",
+        "value": "probe--ad.sm.cn.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "ads"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "HageziAds",
+        "kind": "domain",
+        "value": "0-0-0checkmate.com",
+        "legacy_matches": [
+          "ads"
+        ],
+        "optimized_matches": [
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "AntiAD",
+        "kind": "domain_suffix",
+        "value": "probe.000491b06a.com",
+        "legacy_matches": [
+          "ads"
+        ],
+        "optimized_matches": [
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Spotify",
+        "kind": "domain",
+        "value": "audio4-ak-spotify-com.akamaized.net",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Spotify",
+        "kind": "domain_suffix",
+        "value": "probe.audio-ak-spotify-com.akamaized.net",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Spotify",
+        "kind": "domain_keyword",
+        "value": "probe-spotify.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "Spotify",
+        "kind": "ipv4",
+        "value": "104.154.127.126",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "WhatsApp",
+        "kind": "domain",
+        "value": "graph.facebook.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "WhatsApp",
+        "kind": "domain_suffix",
+        "value": "probe.bintray.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "WhatsApp",
+        "kind": "domain_keyword",
+        "value": "probe-whatsapp.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "WhatsApp",
+        "kind": "ipv4",
+        "value": "158.85.224.160",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "tiktok",
+        "kind": "domain",
+        "value": "lf16-effectcdn.byteeffecttos-g.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "tiktok",
+        "kind": "domain_suffix",
+        "value": "probe.bytedapm.com",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "tiktok",
+        "kind": "domain_keyword",
+        "value": "probe-musical.ly.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "netflix",
+        "kind": "domain",
+        "value": "e13252.dscg.akamaiedge.net",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "netflix",
+        "kind": "domain_suffix",
+        "value": "probe.cookielaw.org",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "netflix",
+        "kind": "domain_keyword",
+        "value": "probe-apiproxy-device-prod-nlb-.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "disney",
+        "kind": "domain_suffix",
+        "value": "probe.20thcenturystudios.com.au",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "primevideo",
+        "kind": "domain",
+        "value": "d1v5ir2lpwr8os.cloudfront.net",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "primevideo",
+        "kind": "domain_suffix",
+        "value": "probe.aiv-cdn.net",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "primevideo",
+        "kind": "domain_keyword",
+        "value": "probe-avoddashs.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "google",
+        "kind": "domain",
+        "value": "voice.telephony.goog",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "google",
+        "kind": "domain_suffix",
+        "value": "probe.0emm.com",
+        "legacy_matches": [
+          "overseas",
+          "ads"
+        ],
+        "optimized_matches": [
+          "overseas",
+          "ads"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "google",
+        "kind": "domain_keyword",
+        "value": "probe-appspot.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "google",
+        "kind": "ipv4",
+        "value": "172.110.32.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "google",
+        "kind": "ipv6",
+        "value": "2620:120:e000::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "apple",
+        "kind": "domain_suffix",
+        "value": "probe.a1.mzstatic.com",
+        "legacy_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "icloud",
+        "kind": "domain_suffix",
+        "value": "probe.www-cdn.icloud.com.akadns.net",
+        "legacy_matches": [
+          "direct-middle"
+        ],
+        "optimized_matches": [
+          "direct-middle"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "DouYin",
+        "kind": "domain",
+        "value": "lf3-static.bytednsdoc.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "DouYin",
+        "kind": "domain_suffix",
+        "value": "probe.amemv.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "BiliBili",
+        "kind": "domain",
+        "value": "0gr4uqmtt8y41hcjsgrzdrc31.ourdvsss.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "BiliBili",
+        "kind": "domain_suffix",
+        "value": "probe.acg.tv",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "BiliBili",
+        "kind": "ipv4",
+        "value": "106.75.74.76",
+        "legacy_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "optimized_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "BaiDuTieBa",
+        "kind": "domain",
+        "value": "als.baidu.com",
+        "legacy_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "BaiDuTieBa",
+        "kind": "domain_suffix",
+        "value": "probe.tieba.baidu.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "alibaba-domain",
+        "kind": "domain_suffix",
+        "value": "probe.10029.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "alibaba",
+        "kind": "ipv4",
+        "value": "103.206.40.0",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "alibaba",
+        "kind": "ipv6",
+        "value": "2400:b200::",
+        "legacy_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "optimized_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "qcloud",
+        "kind": "domain_suffix",
+        "value": "probe.tencentclb.com",
+        "legacy_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-middle",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "global",
+        "kind": "domain",
+        "value": "1password.drift.click",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "global",
+        "kind": "domain_suffix",
+        "value": "probe.01.org",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "global",
+        "kind": "domain_keyword",
+        "value": "probe-amazon.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "global",
+        "kind": "ipv4",
+        "value": "1.201.0.0",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "global",
+        "kind": "ipv6",
+        "value": "2001:67c:4e8::",
+        "legacy_matches": [
+          "overseas"
+        ],
+        "optimized_matches": [
+          "overseas"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "chinamax",
+        "kind": "domain",
+        "value": "cpro.baidustatic.com",
+        "legacy_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "ads",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "chinamax",
+        "kind": "domain_suffix",
+        "value": "probe.115.com",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "chinamax",
+        "kind": "domain_keyword",
+        "value": "probe-.tmall.com.invalid",
+        "legacy_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "chinamax",
+        "kind": "ipv4",
+        "value": "0.0.0.0",
+        "legacy_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-pre",
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "chinamax",
+        "kind": "ipv6",
+        "value": "2001:2000:3080:c80::",
+        "legacy_matches": [
+          "direct-cn"
+        ],
+        "optimized_matches": [
+          "direct-cn"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "cn-ip",
+        "kind": "ipv4",
+        "value": "1.0.1.0",
+        "legacy_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "optimized_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "passed": true
+      },
+      {
+        "provider": "cn-ip",
+        "kind": "ipv6",
+        "value": "2001:250::",
+        "legacy_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "optimized_matches": [
+          "direct-cn",
+          "direct-cn-ip"
+        ],
+        "passed": true
+      }
+    ]
+  },
+  "memory_benchmark": {
+    "version": 1,
+    "platform": "Darwin 24.6.0 arm64",
+    "rss_unit": "platform-dependent",
+    "rss_comparable": false,
+    "legacy": {
+      "max_rss": 0,
+      "rss_unit": "platform-dependent",
+      "init_ms": 791.94
+    },
+    "optimized": {
+      "max_rss": 0,
+      "rss_unit": "platform-dependent",
+      "init_ms": 96.34
+    },
+    "rss_reduction_percent": null,
+    "init_reduction_percent": 87.83
+  },
   "acceptance": {
     "version": 1,
     "input_sha256": "63de164469439988034e21a84a97faeb6f96dbcdc63dd9eb80b8c224fc1f4e49",
@@ -1112,319 +2969,425 @@
         "group": "direct-pre",
         "raw_rules": 140,
         "converted_matchers": 140,
-        "headless_rules": 140
+        "surviving_matchers": 140,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "private": {
         "group": "direct-pre",
         "raw_rules": 130,
         "converted_matchers": 130,
-        "headless_rules": 13
+        "surviving_matchers": 10,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "me": {
         "group": "ai",
         "raw_rules": 15,
         "converted_matchers": 15,
-        "headless_rules": 15
+        "surviving_matchers": 14,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "AppleProxy": {
         "group": "ai",
         "raw_rules": 40,
         "converted_matchers": 40,
-        "headless_rules": 40
+        "surviving_matchers": 38,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "AppleIntelligence": {
         "group": "ai",
         "raw_rules": 10,
         "converted_matchers": 10,
-        "headless_rules": 10
+        "surviving_matchers": 7,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "openai": {
         "group": "ai",
         "raw_rules": 35,
-        "converted_matchers": 1118,
-        "headless_rules": 35
+        "converted_matchers": 1041,
+        "surviving_matchers": 1036,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "claude": {
         "group": "ai",
         "raw_rules": 3,
         "converted_matchers": 3,
-        "headless_rules": 3
+        "surviving_matchers": 3,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Anthropic": {
         "group": "ai",
         "raw_rules": 3,
         "converted_matchers": 3,
-        "headless_rules": 1
+        "surviving_matchers": 1,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "gemini": {
         "group": "ai",
         "raw_rules": 13,
         "converted_matchers": 13,
-        "headless_rules": 13
+        "surviving_matchers": 12,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "AI": {
         "group": "ai",
         "raw_rules": 217,
         "converted_matchers": 217,
-        "headless_rules": 185
+        "surviving_matchers": 173,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "cloudflare": {
         "group": "ai",
         "raw_rules": 30,
         "converted_matchers": 30,
-        "headless_rules": 30
+        "surviving_matchers": 29,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "GoogleVoice": {
         "group": "ai",
         "raw_rules": 1,
         "converted_matchers": 1,
-        "headless_rules": 1
+        "surviving_matchers": 1,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Crypto": {
         "group": "ai",
         "raw_rules": 204,
         "converted_matchers": 204,
-        "headless_rules": 204
+        "surviving_matchers": 204,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "IPCheck": {
         "group": "ai",
         "raw_rules": 25,
         "converted_matchers": 25,
-        "headless_rules": 25
+        "surviving_matchers": 25,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "paypal": {
         "group": "ai",
         "raw_rules": 247,
         "converted_matchers": 247,
-        "headless_rules": 247
+        "surviving_matchers": 247,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "wechat": {
         "group": "direct-middle",
         "raw_rules": 31,
         "converted_matchers": 224,
-        "headless_rules": 31
+        "surviving_matchers": 223,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "apple": {
         "group": "direct-middle",
         "raw_rules": 165,
         "converted_matchers": 165,
-        "headless_rules": 165
+        "surviving_matchers": 162,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "icloud": {
         "group": "direct-middle",
         "raw_rules": 53,
         "converted_matchers": 53,
-        "headless_rules": 53
+        "surviving_matchers": 53,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "qcloud": {
         "group": "direct-middle",
         "raw_rules": 347,
         "converted_matchers": 347,
-        "headless_rules": 347
+        "surviving_matchers": 287,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Scholar-China": {
         "group": "direct-middle",
         "raw_rules": 7,
         "converted_matchers": 7,
-        "headless_rules": 7
+        "surviving_matchers": 7,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Scholar-Foreign": {
         "group": "overseas",
         "raw_rules": 3,
         "converted_matchers": 3,
-        "headless_rules": 3
+        "surviving_matchers": 3,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Scholar": {
         "group": "overseas",
         "raw_rules": 231,
         "converted_matchers": 231,
-        "headless_rules": 231
+        "surviving_matchers": 226,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Telegram": {
         "group": "overseas",
         "raw_rules": 46,
         "converted_matchers": 59,
-        "headless_rules": 46
+        "surviving_matchers": 44,
+        "headless_rules": 3,
+        "coverage": "emitted"
       },
       "github": {
         "group": "overseas",
         "raw_rules": 31,
         "converted_matchers": 31,
-        "headless_rules": 31
+        "surviving_matchers": 28,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "GoogleEarth": {
         "group": "overseas",
         "raw_rules": 16,
         "converted_matchers": 16,
-        "headless_rules": 16
+        "surviving_matchers": 0,
+        "headless_rules": 0,
+        "coverage": "covered_by_same_segment"
       },
       "WhatsApp": {
         "group": "overseas",
         "raw_rules": 17,
         "converted_matchers": 17,
-        "headless_rules": 17
+        "surviving_matchers": 15,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Discord": {
         "group": "overseas",
         "raw_rules": 29,
         "converted_matchers": 29,
-        "headless_rules": 29
+        "surviving_matchers": 26,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "netflix": {
         "group": "overseas",
         "raw_rules": 38,
         "converted_matchers": 38,
-        "headless_rules": 38
+        "surviving_matchers": 34,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "disney": {
         "group": "overseas",
         "raw_rules": 174,
         "converted_matchers": 174,
-        "headless_rules": 174
+        "surviving_matchers": 169,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "primevideo": {
         "group": "overseas",
         "raw_rules": 26,
         "converted_matchers": 26,
-        "headless_rules": 26
+        "surviving_matchers": 18,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "GoogleDrive": {
         "group": "overseas",
         "raw_rules": 6,
         "converted_matchers": 6,
-        "headless_rules": 6
+        "surviving_matchers": 3,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "OneDrive": {
         "group": "overseas",
         "raw_rules": 18,
         "converted_matchers": 18,
-        "headless_rules": 18
+        "surviving_matchers": 12,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "Dropbox": {
         "group": "overseas",
         "raw_rules": 17,
         "converted_matchers": 17,
-        "headless_rules": 17
+        "surviving_matchers": 15,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "MEGA": {
         "group": "overseas",
         "raw_rules": 14,
         "converted_matchers": 14,
-        "headless_rules": 14
+        "surviving_matchers": 14,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "youtube": {
         "group": "overseas",
         "raw_rules": 183,
         "converted_matchers": 183,
-        "headless_rules": 183
+        "surviving_matchers": 177,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "Instagram": {
         "group": "overseas",
         "raw_rules": 4,
         "converted_matchers": 4,
-        "headless_rules": 4
+        "surviving_matchers": 4,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Facebook": {
         "group": "overseas",
         "raw_rules": 570,
         "converted_matchers": 604,
-        "headless_rules": 564
+        "surviving_matchers": 588,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Twitter": {
         "group": "overseas",
         "raw_rules": 33,
         "converted_matchers": 33,
-        "headless_rules": 33
+        "surviving_matchers": 33,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Reddit": {
         "group": "overseas",
         "raw_rules": 8,
         "converted_matchers": 8,
-        "headless_rules": 8
+        "surviving_matchers": 6,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "Spotify": {
         "group": "overseas",
         "raw_rules": 30,
         "converted_matchers": 30,
-        "headless_rules": 30
+        "surviving_matchers": 22,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "tiktok": {
         "group": "overseas",
         "raw_rules": 32,
         "converted_matchers": 32,
-        "headless_rules": 32
+        "surviving_matchers": 31,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "google": {
         "group": "overseas",
         "raw_rules": 701,
         "converted_matchers": 701,
-        "headless_rules": 698
+        "surviving_matchers": 689,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "global": {
         "group": "overseas",
         "raw_rules": 35036,
         "converted_matchers": 35036,
-        "headless_rules": 33133
+        "surviving_matchers": 27531,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "AWAvenueAds": {
         "group": "ads",
         "raw_rules": 902,
         "converted_matchers": 902,
-        "headless_rules": 902
+        "surviving_matchers": 32,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "HageziAds": {
         "group": "ads",
         "raw_rules": 83596,
         "converted_matchers": 83596,
-        "headless_rules": 83071
+        "surviving_matchers": 36784,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "AntiAD": {
         "group": "ads",
         "raw_rules": 100977,
         "converted_matchers": 100977,
-        "headless_rules": 100967
+        "surviving_matchers": 100964,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "DouYin": {
         "group": "direct-cn",
         "raw_rules": 13,
         "converted_matchers": 13,
-        "headless_rules": 13
+        "surviving_matchers": 11,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "BiliBili": {
         "group": "direct-cn",
         "raw_rules": 129,
         "converted_matchers": 129,
-        "headless_rules": 129
+        "surviving_matchers": 54,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "BaiDuTieBa": {
         "group": "direct-cn",
         "raw_rules": 32,
         "converted_matchers": 32,
-        "headless_rules": 32
+        "surviving_matchers": 1,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "alibaba-domain": {
         "group": "direct-cn",
         "raw_rules": 1266,
         "converted_matchers": 1266,
-        "headless_rules": 1266
+        "surviving_matchers": 1185,
+        "headless_rules": 1,
+        "coverage": "emitted"
       },
       "alibaba": {
         "group": "direct-cn",
         "raw_rules": 55,
         "converted_matchers": 55,
-        "headless_rules": 55
+        "surviving_matchers": 42,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "chinamax": {
         "group": "direct-cn",
         "raw_rules": 123877,
         "converted_matchers": 124070,
-        "headless_rules": 122619
+        "surviving_matchers": 122746,
+        "headless_rules": 2,
+        "coverage": "emitted"
       },
       "cn-ip": {
         "group": "direct-cn-ip",
         "raw_rules": 9651,
         "converted_matchers": 9651,
-        "headless_rules": 9651
+        "surviving_matchers": 9651,
+        "headless_rules": 1,
+        "coverage": "emitted"
       }
     },
     "providers_included": 53,
@@ -1443,25 +3406,30 @@
       "total": 21,
       "failed": 0
     },
+    "sampled_legacy_optimized_parity": {
+      "passed": 127,
+      "total": 127,
+      "failed": 0
+    },
     "source_binary_parity": true,
     "route_coherence": true,
     "source_sha256": {
-      "ai": "9872171e9b4d24dd850ac727939003bb3ad37a2ca73e143d5b7cf448b0d82153",
-      "direct-pre": "8f69ac615bc905ede1d05d234cc4ebae43ca7390434c93dfcfa9dac716b70080",
-      "direct-cn": "459280815d266ae7c30f6b7226d621ac3532ac9dd77a49f8c0f88086b42dc4b5",
-      "direct-middle": "78c8c03902956be8736ce7ec00914c9248d5a0b4c39e7300bfff02b317f92dee",
-      "direct-cn-ip": "74a562f957b89dec9059826387ae28fa3a25b52a537970977fb1fe40eb75ed5a",
-      "overseas": "991732715d3d26a39ceb5f20f2801fe12115513b080321f9d806984e0209441f",
-      "ads": "1654f1271432c78af3ac15bba707b363b029ece71c93d19c9529ec8604531762"
+      "direct-cn-ip": "f5fe51ad9ef152f9919c6c22091a32668853ef3fe6453daec42794982798cee9",
+      "ai": "20efa90d97c2d02532da4fa52070fd015983ec64159e8ec47c24e4945c099cde",
+      "ads": "a9ce94ce9678157e51fe2ad200b863e05f97a06ba8a94945a56dd15a874a68e6",
+      "direct-pre": "ce38669f9233f0de26cc128be515d825a6daac146d597ed94b34fc6c87476d62",
+      "direct-cn": "44485be8b6fe92b617d3f0773fffba76c3419b1b8b9e618c0dbd8cd606d477d1",
+      "direct-middle": "dbe76b413cd18c54e09c0a28e968aaebb72cf0c3d8288bb51ac1ecb8f3b0548f",
+      "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304"
     },
     "srs_sha256": {
-      "direct-cn": "55d20b001e409f5e19eff55d9d364ce0d736b1b018d771bd9baee103da97b06e",
-      "overseas": "76341fa68d012a1a8c2a1829a8b8f9312dd102f5a6299188a41e46fcd80ca60d",
-      "ads": "3226c6a2de4fe9d5a9e92ecd636718638aa5a87dd8de423bcf6e76063e50c551",
-      "direct-cn-ip": "b57b714c2355991d689221b5ca1f8126aea8a8ec06910e00ca4aaacb45efb1d6",
-      "direct-pre": "ae3e75ea61aa2aa2bd4e08233ef6e58d9ece1e37540d7050ed889008e44882c7",
-      "ai": "cb1b07187e05b8f70538dcc77f1ee07b9b4f1b807d523af0b7118ccb676e9b51",
-      "direct-middle": "a487c20df58e7a0430d13cdc9566debf556bfaa40f2fd4604a1a63575ded767b"
+      "direct-cn": "e74c95305bb4cca9ffe8a22fd8a6fbee3a3ac0078473d812c994c0b6ea948f8b",
+      "ads": "c6d946d4098d090b54ae055dea4789dcfa1989dc3f5499440a3d8e587a8290b8",
+      "direct-cn-ip": "ec0c240a4d86dac60881e8d5a03ded84fb54cb4d4a219463a8b59b3104112e52",
+      "direct-pre": "ad279d5cbe0d257dfe684ae29272224389f5cf6c65bc867b021e2dd7cb6703ea",
+      "direct-middle": "09f0a036c10624d0a8742d6fb01ec576d577472951c1a9e2b63386eba828c34c",
+      "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
+      "ai": "78cfa994246eae708a1adb9d61aa92fcf91e8ed06dd36d001bb3964986d55e3b"
     },
     "route_sha256": "a1e408f389b09026d9ea4f803308cdd4d176286392d2df190c97a513c9fdfd2a"
   }

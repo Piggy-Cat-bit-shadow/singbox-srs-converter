@@ -26,6 +26,7 @@ jobs:
         run: |
           python -m json.tool dist/report.json >/dev/null
           python -m json.tool dist/semantic-audit.json >/dev/null
+          python -m json.tool dist/memory-benchmark.json >/dev/null
           test "$(find dist/source -name '*.json' | wc -l | tr -d ' ')" = 7
           test "$(find dist/srs -name '*.srs' | wc -l | tr -d ' ')" = 7
           test "$(python -c 'import json; print(json.load(open("dist/report.json"))["providers"])')" = 53
@@ -33,6 +34,7 @@ jobs:
           test "$(python -c 'import json; print(json.load(open("dist/report.json"))["unsupported_rules"])')" = 0
           test "$(python -c 'import json; print(json.load(open("dist/semantic-audit.json"))["failed"])')" = 0
           test "$(python -c 'import json; x=json.load(open("dist/semantic-audit.json")); print(x["passed"] == x["total"])')" = True
+          test "$(python -c 'import json; x=json.load(open("dist/memory-benchmark.json")); print(x["rss_comparable"] and x["optimized"]["max_rss"] < x["legacy"]["max_rss"])')" = True
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "build: update generated sing-box SRS"

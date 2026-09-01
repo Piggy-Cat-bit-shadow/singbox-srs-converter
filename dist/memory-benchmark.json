@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "platform": "Darwin 24.6.0 arm64",
+  "rss_unit": "platform-dependent",
+  "rss_comparable": false,
+  "legacy": {
+    "max_rss": 0,
+    "rss_unit": "platform-dependent",
+    "init_ms": 791.94
+  },
+  "optimized": {
+    "max_rss": 0,
+    "rss_unit": "platform-dependent",
+    "init_ms": 96.34
+  },
+  "rss_reduction_percent": null,
+  "init_reduction_percent": 87.83
+}

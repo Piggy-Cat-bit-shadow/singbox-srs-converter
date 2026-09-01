@@ -11,10 +11,10 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(parse('DOMAIN-REGEX,^a,b$','classical','x')[0].value,'^a,b$')
     def test_safe_domain_dedup(self):
         ms=parse('DOMAIN,api.example.com','classical','x')+parse('DOMAIN-SUFFIX,example.com','classical','x')+parse('DOMAIN-KEYWORD,example','classical','x')
-        out,st=dedup(ms); self.assertEqual([x.kind for x in out],['domain','domain_suffix','domain_keyword']); self.assertEqual(st['domain_covered_by_suffix'],0)
+        out,st=dedup(ms); self.assertEqual([x.kind for x in out],['domain_suffix','domain_keyword']); self.assertEqual(st['domain_covered_by_suffix'],1)
     def test_cidr_and_ports(self):
         ms=parse('IP-CIDR,10.0.0.0/8','classical','x')+parse('IP-CIDR,10.1.0.0/16','classical','x')+parse('DST-PORT,80/100-200','classical','x')
-        out,_=dedup(ms); self.assertEqual(sum(x.kind=='ip_cidr' for x in out),2); self.assertEqual(out[-2].value,'[80]')
+        out,_=dedup(ms); self.assertEqual(sum(x.kind=='ip_cidr' for x in out),1); self.assertIn('[80]',[m.value for m in out])
     def test_process_or(self):
         self.assertEqual(parse('PROCESS-NAME,org.telegram.messenger','classical','x')[0].kind,'process_name')
     def test_unsupported(self):
@@ -27,9 +27,42 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(suffix.kind,'domain_suffix'); self.assertEqual(suffix.value,'example.com')
         child=re.compile(parse('.example.com','domain','x')[0].value)
         self.assertFalse(child.match('example.com')); self.assertTrue(child.match('a.example.com'))
-    def test_adjacent_cidr_not_collapsed(self):
+    def test_adjacent_cidr_collapsed(self):
         ms=parse('IP-CIDR,1.2.3.0/25','classical','x')+parse('IP-CIDR,1.2.3.128/25','classical','x')
-        out,_=dedup(ms); self.assertEqual([m.value for m in out],['1.2.3.0/25','1.2.3.128/25'])
+        out,st=dedup(ms); self.assertEqual([m.value for m in out],['1.2.3.0/24']); self.assertEqual(st['ip_collapse_reduction'],1)
+    def test_suffix_child_and_modifier_boundaries(self):
+        ms=(parse('DOMAIN-SUFFIX,a.example.com','classical','x')+
+            parse('DOMAIN-SUFFIX,example.com','classical','x')+
+            parse('DOMAIN,a.example.com,no-resolve','classical','x'))
+        out,st=dedup(ms)
+        self.assertEqual([(m.kind,m.value,m.modifiers) for m in out],[('domain_suffix','example.com',()),('domain','a.example.com',('no-resolve',))])
+        self.assertEqual(st['suffix_covered_by_parent_suffix'],1)
+    def test_unrelated_suffix_keyword_and_regex_are_not_covered(self):
+        ms=(parse('DOMAIN-SUFFIX,example.com','classical','x')+
+            parse('DOMAIN-SUFFIX,example.net','classical','x')+
+            parse('DOMAIN-KEYWORD,example','classical','x')+
+            parse('DOMAIN-REGEX,^example\\.com$','classical','x'))
+        out,_=dedup(ms)
+        self.assertEqual([(m.kind,m.value) for m in out],[('domain_suffix','example.com'),('domain_suffix','example.net'),('domain_keyword','example'),('domain_regex','^example\\.com$')])
+    def test_ipv6_collapse_is_separate_from_ipv4(self):
+        ms=parse('IP-CIDR6,2001:db8::/65','classical','x')+parse('IP-CIDR6,2001:db8:0:0:8000::/65','classical','x')
+        out,st=dedup(ms)
+        self.assertEqual([m.value for m in out],['2001:db8::/64']); self.assertEqual(st['ip_collapse_reduction'],1)
+    def test_policy_segments_are_optimized_independently(self):
+        left,_=dedup(parse('DOMAIN,api.example.com','classical','left'))
+        right,_=dedup(parse('DOMAIN-SUFFIX,example.com','classical','right'))
+        self.assertEqual(left[0].kind,'domain'); self.assertEqual(right[0].kind,'domain_suffix')
+    def test_destination_and_source_ip_do_not_mix(self):
+        ms=parse('IP-CIDR,10.0.0.0/24','classical','x')+parse('SRC-IP-CIDR,10.0.0.0/24','classical','x')
+        self.assertEqual(serialize_source_rules(ms),[{'ip_cidr':['10.0.0.0/24']},{'source_ip_cidr':['10.0.0.0/24']}])
+    def test_destination_matchers_aggregate_but_port_stays_independent(self):
+        ms=(parse('DOMAIN,api.example.com','classical','x')+
+            parse('DOMAIN-SUFFIX,example.com','classical','x')+
+            parse('IP-CIDR,192.0.2.0/24','classical','x')+
+            parse('DST-PORT,443','classical','x'))
+        self.assertEqual(serialize_source_rules(ms),[
+            {'domain':['api.example.com'],'domain_suffix':['example.com'],'ip_cidr':['192.0.2.0/24']},
+            {'port':[443]}])
     def test_process_is_two_or_rules_in_source_shape(self):
         m=parse('PROCESS-NAME,test','classical','x')[0]
         self.assertEqual(m.kind,'process_name')

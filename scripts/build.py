@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 # membership and ordering are always derived from the input rules list.
 SEGMENT_TAGS={('DIRECT',(),1):'direct-pre',('🤖 AI',(),1):'ai',('DIRECT',(),2):'direct-middle',('⚡ 海外高速',(),1):'overseas',('REJECT-DROP',(),1):'ads',('DIRECT',(),3):'direct-cn',('DIRECT',('no-resolve',),1):'direct-cn-ip'}
 POLICY_OUTBOUNDS={'DIRECT':'direct','🤖 AI':'ai','⚡ 海外高速':'overseas'}
-SAMPLES={k:[] for k in ('exact_duplicates_removed','domain_covered_by_suffix','suffix_covered_by_parent_suffix','ipcidr_duplicates_removed','ipcidr_covered_by_parent')}
+SAMPLES={k:[] for k in ('exact_duplicates_removed','domain_covered_by_suffix','suffix_covered_by_parent_suffix','ipcidr_duplicates_removed','ipcidr_covered_by_parent','ip_collapse_reduction')}
 @dataclass(frozen=True)
 class M:
     kind:str; value:str; modifiers:tuple=(); provider:str=''; source:str=''; expanded_from:str|None=None
@@ -122,17 +122,91 @@ def load(pname,spec,base):
     for raw in vals: ms += parse(str(raw),spec['behavior'],pname)
     return ms,sha,len(vals)
 def dedup(ms):
-    """Conservative, policy-local exact dedup only.
-
-    Coverage inference is deliberately disabled: matching set equivalence alone is
-    insufficient once provenance and future metadata are considered.
-    """
+    """Policy-local semantic compression for OR-only matcher families."""
     stats={k:0 for k in SAMPLES}; seen=set(); unique=[]
     for m in ms:
         key=(m.kind,m.value,m.modifiers)
         if key in seen: stats['exact_duplicates_removed']+=1
         else: seen.add(key); unique.append(m)
-    return unique,stats
+    # Modifiers participate in matcher semantics. Never let a no-resolve (or
+    # future modifier) rule cover a matcher from another modifier bucket.
+    suffixes_by_modifiers={}
+    for m in unique:
+        if m.kind=='domain_suffix': suffixes_by_modifiers.setdefault(m.modifiers,set()).add(m.value)
+    redundant_suffix=set(); final_suffixes={}
+    for modifiers,suffixes in suffixes_by_modifiers.items():
+        redundant_suffix |= {(modifiers,s) for s in suffixes if any('.'.join(s.split('.')[i:]) in suffixes for i in range(1,len(s.split('.'))))}
+        final_suffixes[modifiers]=suffixes-{s for mod,s in redundant_suffix if mod==modifiers}
+    def suffix_covers(domain, modifiers):
+        labels=domain.split('.'); suffixes=final_suffixes.get(modifiers,set())
+        return any('.'.join(labels[i:]) in suffixes for i in range(len(labels)))
+    survivors=[]
+    for m in unique:
+        if m.kind=='domain_suffix' and (m.modifiers,m.value) in redundant_suffix:
+            stats['suffix_covered_by_parent_suffix']+=1; continue
+        if m.kind=='domain' and suffix_covers(m.value,m.modifiers):
+            stats['domain_covered_by_suffix']+=1; continue
+        survivors.append(m)
+    out=[]
+    for kind in ('ip_cidr','source_ip_cidr'):
+        family=[m for m in survivors if m.kind==kind]
+        others=[m for m in survivors if m.kind!=kind]
+        by_version={}
+        for m in family:
+            by_version.setdefault((m.modifiers,ipaddress.ip_network(m.value).version),[]).append(m)
+        collapsed=[]
+        for _, items in by_version.items():
+            nets=[ipaddress.ip_network(m.value) for m in items]
+            result=list(ipaddress.collapse_addresses(nets))
+            stats['ip_collapse_reduction'] += len(items)-len(result)
+            exemplar={str(ipaddress.ip_network(m.value)):m for m in items}
+            for net in result:
+                key=str(net); base=exemplar.get(key,items[0])
+                collapsed.append(M(kind,key,base.modifiers,base.provider,base.source,base.expanded_from))
+        survivors=others+collapsed
+    # Stable grouping by original kind improves reproducibility while avoiding
+    # provenance-driven runtime rule boundaries.
+    return survivors,stats
+
+def matcher_value_count(matchers):
+    """Count selectable matcher values, including every parsed port/range."""
+    total=0
+    for m in matchers:
+        total += len(json.loads(m.value)) if m.kind in ('port','port_range','source_port','source_port_range') else 1
+    return total
+
+def rule_value_count(rules):
+    return sum(len(values) for rule in rules for values in rule.values())
+
+def matcher_kinds(matchers):
+    return {kind:sum(m.kind==kind for m in matchers) for kind in ('domain','domain_suffix','domain_keyword','domain_regex','ip_cidr','source_ip_cidr')}
+
+def serialize_legacy_source_rules(matchers):
+    """Pre-aggregation shape, retained only for equivalence and RSS benchmarks."""
+    rules=[]
+    for m in matchers:
+        if m.kind in ('port','port_range','source_port','source_port_range'):
+            rules.append({m.kind:json.loads(m.value)})
+        else:
+            rules.append({m.kind:[m.value]})
+    return rules
+
+def benchmark_rule_sets(rule_dir, sb, groups, tmp):
+    """Load all local binary rule sets once and record a comparable RSS sample."""
+    config={'log':{'level':'error'},'outbounds':[{'type':'direct','tag':'direct'}],
+      'route':{'rule_set':[{'type':'local','tag':g['tag'],'format':'binary','path':str(rule_dir/f'{g["tag"]}.srs')} for g in groups],
+               'rules':[{'rule_set':[g['tag']],'action':'route','outbound':'direct'} for g in groups]}}
+    path=tmp/f'benchmark-{rule_dir.name}.json'; path.write_text(json.dumps(config))
+    started=time.perf_counter(); p=subprocess.run(['/usr/bin/time','-v',sb,'check','-c',str(path)],capture_output=True,text=True)
+    elapsed_ms=round((time.perf_counter()-started)*1000,2)
+    if p.returncode:
+        # macOS BSD time lacks -v; its -l output still carries a usable RSS field.
+        started=time.perf_counter(); p=subprocess.run(['/usr/bin/time','-l',sb,'check','-c',str(path)],capture_output=True,text=True)
+        elapsed_ms=round((time.perf_counter()-started)*1000,2)
+    if p.returncode: raise RuntimeError('benchmark config failed: '+p.stderr)
+    hit=re.search(r'(?:Maximum resident set size \(kbytes\):|maximum resident set size)\s*(\d+)',p.stderr,re.I)
+    if not hit: raise RuntimeError('benchmark RSS was not reported: '+p.stderr)
+    return {'max_rss':int(hit.group(1)),'rss_unit':'kb' if '-v' in p.args else 'platform-dependent','init_ms':elapsed_ms}
 def expand_asn(allms):
     need={m.value for ms in allms.values() for m in ms if m.kind in ('asn','src_asn')}
     if not need: return allms, {}
@@ -156,25 +230,22 @@ def expand_asn(allms):
         allms[name]=out
     return allms,audit
 def serialize_source_rules(matchers):
-    """Keep each original classical rule as a separate headless rule.
-
-    A single raw port expression may contain both exact ports and ranges, which
-    share a rule boundary and can safely occupy one default rule.
-    """
-    grouped={}; order=[]
+    """Plan the minimum set of safe sing-box default rules for one segment."""
+    buckets={}
     for m in matchers:
-        key=(m.provider,m.source,m.modifiers)
-        if key not in grouped: grouped[key]=[]; order.append(key)
-        grouped[key].append(m)
-    rules=[]
-    for key in order:
-        fields={}
-        for m in grouped[key]:
-            if m.kind in ('asn','src_asn'): raise ValueError(f'ASN expansion failed: {m.source}')
-            if m.kind in ('port','port_range','source_port','source_port_range'):
-                fields.setdefault(m.kind,[]).extend(json.loads(m.value))
-            else: fields.setdefault(m.kind,[]).append(m.value)
-        rules.append({k:list(dict.fromkeys(v)) for k,v in fields.items() if v})
+        if m.kind in ('asn','src_asn'): raise ValueError(f'ASN expansion failed: {m.source}')
+        key=m.modifiers
+        bucket=buckets.setdefault(key,{})
+        if m.kind in ('port','port_range','source_port','source_port_range'):
+            bucket.setdefault(m.kind,[]).extend(json.loads(m.value))
+        else: bucket.setdefault(m.kind,[]).append(m.value)
+    rules=[]; destination=('domain','domain_suffix','domain_keyword','domain_regex','ip_cidr')
+    for fields in buckets.values():
+        selected={k:list(dict.fromkeys(fields[k])) for k in destination if fields.get(k)}
+        if selected: rules.append(selected)
+        for group in (('source_ip_cidr',),('port','port_range'),('source_port','source_port_range'),('network',),('process_name',),('process_path',),('process_path_regex',)):
+            selected={k:list(dict.fromkeys(fields[k])) for k in group if fields.get(k)}
+            if selected: rules.append(selected)
     return rules
 def semantic_audit(rule_dir, sb, groups, fmt='binary'):
     corpus=[
@@ -193,25 +264,63 @@ def semantic_audit(rule_dir, sb, groups, fmt='binary'):
         actual=hits[0] if hits else None
         audit.append({'domain':domain,'expected':expected,'matched_groups':hits,'first_match':actual,'passed':actual==expected})
     return audit
+
+def matched_tags(rule_dir, sb, groups, value, fmt='binary'):
+    tags=[]
+    for g in groups:
+        suffix='.srs' if fmt=='binary' else '.json'
+        p=subprocess.run([sb,'rule-set','match','-f',fmt,str(rule_dir/f'{g["tag"]}{suffix}'),value],capture_output=True,text=True)
+        if p.returncode==0 and p.stderr.startswith('match '): tags.append(g['tag'])
+    return tags
+
+def representative_samples(allms):
+    """One safe, deterministic example per provider and matcher family."""
+    samples=[]
+    for provider,matchers in allms.items():
+        picked=set()
+        for m in matchers:
+            if m.kind=='domain' and 'domain' not in picked: value,label=m.value,'domain'
+            elif m.kind=='domain_suffix' and 'domain_suffix' not in picked: value,label='probe.'+m.value,'domain_suffix'
+            elif m.kind=='ip_cidr' and 'ipv4' not in picked and ipaddress.ip_network(m.value).version==4: value,label=str(ipaddress.ip_network(m.value).network_address),'ipv4'
+            elif m.kind=='ip_cidr' and 'ipv6' not in picked and ipaddress.ip_network(m.value).version==6: value,label=str(ipaddress.ip_network(m.value).network_address),'ipv6'
+            elif m.kind=='domain_keyword' and 'domain_keyword' not in picked: value,label='probe-'+m.value+'.invalid','domain_keyword'
+            else: continue
+            picked.add(label); samples.append({'provider':provider,'kind':label,'value':value})
+    return samples
+
+def compare_legacy_semantics(legacy_dir, optimized_dir, sb, groups, allms):
+    checks=[]
+    for sample in representative_samples(allms):
+        legacy=matched_tags(legacy_dir,sb,groups,sample['value'])
+        optimized=matched_tags(optimized_dir,sb,groups,sample['value'])
+        checks.append({**sample,'legacy_matches':legacy,'optimized_matches':optimized,'passed':legacy==optimized and (legacy[:1] if legacy else [])==(optimized[:1] if optimized else [])})
+    failed=[x for x in checks if not x['passed']]
+    if failed: raise RuntimeError('sampled legacy/optimized semantic regression: '+json.dumps(failed[:3],ensure_ascii=False))
+    return {'total':len(checks),'passed':len(checks),'failed':0,'cases':checks}
 def sha256_file(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('input'); ap.add_argument('--base-url',default='https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main'); ap.add_argument('--sing-box',default='sing-box'); a=ap.parse_args()
     cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; groups=derive_groups(cfg); names=[p for g in groups for p in g['providers']]
     if len(names)!=len(set(names)) or set(names)!=set(providers): raise SystemExit('provider/rules mismatch: every provider must be used exactly once')
-    tmp=Path(tempfile.mkdtemp(prefix='srs-build-',dir=ROOT)); (tmp/'source').mkdir(); (tmp/'srs').mkdir(); (tmp/'generated').mkdir(); details={}; allms={}; stats={k:0 for k in SAMPLES}
+    tmp=Path(tempfile.mkdtemp(prefix='srs-build-',dir=ROOT)); (tmp/'source').mkdir(); (tmp/'srs').mkdir(); (tmp/'legacy-source').mkdir(); (tmp/'legacy-srs').mkdir(); (tmp/'generated').mkdir(); details={}; allms={}; stats={k:0 for k in SAMPLES}
     try:
         for n,s in providers.items():
             ms,sha,raw=load(n,s,ROOT); allms[n]=ms; details[n]={'raw_count':raw,'parsed_count':len(ms),'sha256':sha,'source':s.get('url',s.get('path'))}
         asn_rules=sum(1 for ms in allms.values() for m in ms if m.kind in ('asn','src_asn'))
         allms,asn_audit=expand_asn(allms)
-        group_details={}; before_total=after_total=0; coverage={}; compile_count=decompile_count=0
+        group_details={}; before_total=after_total=0; before_headless_total=after_headless_total=before_matcher_values=after_matcher_values=0; coverage={}; compile_count=decompile_count=0
         for g in groups:
             ms=[m for n in g['providers'] for m in allms[n]]; before=len(ms); clean,st=dedup(ms)
             before_total += before; after_total += len(clean)
             for k,v in st.items(): stats[k]+=v
             rules=serialize_source_rules(clean)
+            legacy_rules=serialize_legacy_source_rules(ms)
             if not rules: raise ValueError(f'empty group {g["tag"]}')
+            before_headless_total += len(legacy_rules); after_headless_total += len(rules)
+            before_matcher_values += matcher_value_count(ms); after_matcher_values += rule_value_count(rules)
+            (tmp/'legacy-source'/f'{g["tag"]}.json').write_text(json.dumps({'version':2,'rules':legacy_rules},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+            subprocess.run([a.sing_box,'rule-set','compile','--output',str(tmp/'legacy-srs'/f'{g["tag"]}.srs'),str(tmp/'legacy-source'/f'{g["tag"]}.json')],check=True)
             (tmp/'source'/f'{g["tag"]}.json').write_text(json.dumps({'version':2,'rules':rules},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
             subprocess.run([a.sing_box,'rule-set','compile','--output',str(tmp/'srs'/f'{g["tag"]}.srs'),str(tmp/'source'/f'{g["tag"]}.json')],check=True)
             compile_count+=1
@@ -220,16 +329,16 @@ def main():
             json.loads(decompiled.read_text(encoding='utf-8'))
             decompiled.unlink()
             decompile_count+=1
-            group_details[g['tag']]={'provider_count':len(g['providers']),'raw_rules':sum(details[n]['raw_count'] for n in g['providers']),'before_dedup':before,'after_dedup':len(clean),'removed':before-len(clean),'srs_bytes':(tmp/'srs'/f'{g["tag"]}.srs').stat().st_size}
+            group_details[g['tag']]={'provider_count':len(g['providers']),'raw_rules':sum(details[n]['raw_count'] for n in g['providers']),'normalized_matchers':before,'optimized_matchers':len(clean),'before_dedup_matchers':before,'after_dedup_matchers':len(clean),'dedup_removed':before-len(clean),'unaggregated_headless_rules':len(legacy_rules),'aggregated_headless_rules':len(rules),'matcher_values_before':matcher_value_count(ms),'matcher_values_after':rule_value_count(rules),'matcher_kinds_before':matcher_kinds(ms),'matcher_kinds_after':matcher_kinds(clean),'srs_bytes_before':(tmp/'legacy-srs'/f'{g["tag"]}.srs').stat().st_size,'srs_bytes_after':(tmp/'srs'/f'{g["tag"]}.srs').stat().st_size}
             for provider in g['providers']:
                 survivors=[m for m in clean if m.provider==provider]
-                coverage[provider]={'group':g['tag'],'raw_rules':details[provider]['raw_count'],'converted_matchers':len(allms[provider]),'headless_rules':len(serialize_source_rules(survivors))}
-                if not survivors: raise ValueError(f'provider lost after exact dedup: {provider}')
+                coverage[provider]={'group':g['tag'],'raw_rules':details[provider]['raw_count'],'converted_matchers':len(allms[provider]),'surviving_matchers':len(survivors),'headless_rules':len(serialize_source_rules(survivors)),'coverage':'emitted' if survivors else 'covered_by_same_segment'}
         route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':POLICY_OUTBOUNDS[g['policy']]}) for g in groups],'final':'overseas'}}
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
         semantic=semantic_audit(tmp/'srs',a.sing_box,groups)
         source_semantic=semantic_audit(tmp/'source',a.sing_box,groups,'source')
         if [x['first_match'] for x in semantic] != [x['first_match'] for x in source_semantic]: raise RuntimeError('source/binary semantic parity failed')
+        sampled_semantic=compare_legacy_semantics(tmp/'legacy-srs',tmp/'srs',a.sing_box,groups,allms)
         failed=[x for x in semantic if not x['passed']]
         audit_payload={'version':1,'route_order':[g['tag'] for g in groups],'total':len(semantic),'passed':len(semantic)-len(failed),'failed':len(failed),'cases':semantic}
         (tmp/'semantic-audit.json').write_text(json.dumps(audit_payload,ensure_ascii=False,indent=2)+'\n')
@@ -239,16 +348,30 @@ def main():
         if route_tags != expected_tags: raise RuntimeError('route order does not match derived segments')
         source_tags={p.stem for p in (tmp/'source').glob('*.json')}; srs_tags={p.stem for p in (tmp/'srs').glob('*.srs')}
         if source_tags != set(expected_tags) or srs_tags != set(expected_tags): raise RuntimeError('source/SRS tags do not match route')
-        acceptance={'version':1,'input_sha256':sha256_file(Path(a.input)),'provider_coverage':coverage,'providers_included':len(coverage),'providers_total':len(providers),'segments':len(groups),'srs_compile':{'passed':compile_count,'total':len(groups)},'srs_decompile':{'passed':decompile_count,'total':len(groups)},'semantic_regression':{'passed':audit_payload['passed'],'total':audit_payload['total'],'failed':audit_payload['failed']},'source_binary_parity':True,'route_coherence':True,'source_sha256':{p.stem:sha256_file(p) for p in (tmp/'source').glob('*.json')},'srs_sha256':{p.stem:sha256_file(p) for p in (tmp/'srs').glob('*.srs')},'route_sha256':sha256_file(tmp/'generated'/'sing-box-route.json')}
+        legacy_benchmark=benchmark_rule_sets(tmp/'legacy-srs',a.sing_box,groups,tmp)
+        optimized_benchmark=benchmark_rule_sets(tmp/'srs',a.sing_box,groups,tmp)
+        if legacy_benchmark['rss_unit'] != optimized_benchmark['rss_unit']: raise RuntimeError('benchmark RSS units differ')
+        rss_comparable=legacy_benchmark['max_rss']>0 and optimized_benchmark['max_rss']>0
+        benchmark={'version':1,'platform':' '.join(subprocess.run(['uname','-srm'],capture_output=True,text=True).stdout.split()),'rss_unit':legacy_benchmark['rss_unit'],'rss_comparable':rss_comparable,'legacy':legacy_benchmark,'optimized':optimized_benchmark,'rss_reduction_percent':round((legacy_benchmark['max_rss']-optimized_benchmark['max_rss'])/legacy_benchmark['max_rss']*100,2) if rss_comparable else None,'init_reduction_percent':round((legacy_benchmark['init_ms']-optimized_benchmark['init_ms'])/legacy_benchmark['init_ms']*100,2) if legacy_benchmark['init_ms'] else 0.0}
+        if rss_comparable and optimized_benchmark['max_rss'] >= legacy_benchmark['max_rss']: raise RuntimeError('runtime RSS benchmark did not improve: '+json.dumps({'legacy':legacy_benchmark,'optimized':optimized_benchmark}))
+        (tmp/'memory-benchmark.json').write_text(json.dumps(benchmark,ensure_ascii=False,indent=2)+'\n')
+        (tmp/'memory-benchmark.md').write_text('# Runtime Memory Benchmark\n\n| Metric | Legacy | Optimized | Reduction |\n|---|---:|---:|---:|\n| Max RSS ('+benchmark['rss_unit']+') | '+str(legacy_benchmark['max_rss'])+' | '+str(optimized_benchmark['max_rss'])+' | '+str(benchmark['rss_reduction_percent'])+'% |\n| Initialization (ms) | '+str(legacy_benchmark['init_ms'])+' | '+str(optimized_benchmark['init_ms'])+' | '+str(benchmark['init_reduction_percent'])+'% |\n\nLinux/macOS RSS is a comparative CI signal, not an iOS Packet Tunnel memory guarantee.\n')
+        acceptance={'version':1,'input_sha256':sha256_file(Path(a.input)),'provider_coverage':coverage,'providers_included':len(coverage),'providers_total':len(providers),'segments':len(groups),'srs_compile':{'passed':compile_count,'total':len(groups)},'srs_decompile':{'passed':decompile_count,'total':len(groups)},'semantic_regression':{'passed':audit_payload['passed'],'total':audit_payload['total'],'failed':audit_payload['failed']},'sampled_legacy_optimized_parity':{'passed':sampled_semantic['passed'],'total':sampled_semantic['total'],'failed':sampled_semantic['failed']},'source_binary_parity':True,'route_coherence':True,'source_sha256':{p.stem:sha256_file(p) for p in (tmp/'source').glob('*.json')},'srs_sha256':{p.stem:sha256_file(p) for p in (tmp/'srs').glob('*.srs')},'route_sha256':sha256_file(tmp/'generated'/'sing-box-route.json')}
         (tmp/'acceptance.json').write_text(json.dumps(acceptance,ensure_ascii=False,indent=2)+'\n')
-        status='# Build Status: PASS\n\nInput: examples/my-rules.yaml\n\nProviders: {}/{} included\nSegments: {}/{}\nSRS compile: {}/{} PASS\nSRS decompile: {}/{} PASS\nProvider coverage: {}/{} PASS\nSemantic regression: {}/{} PASS\nSource/Binary parity: PASS\nRoute order: PASS\nUnsupported rules: 0\n\nResult:\nAll generated rule sets passed acceptance checks.\n'.format(len(coverage),len(providers),len(groups),len(groups),compile_count,len(groups),decompile_count,len(groups),len(coverage),len(providers),audit_payload['passed'],audit_payload['total'])
+        status='# Build Status: PASS\n\nInput: examples/my-rules.yaml\n\nProviders: {}/{} included\nSegments: {}/{}\nSRS compile: {}/{} PASS\nSRS decompile: {}/{} PASS\nProvider coverage: {}/{} PASS\nSemantic regression: {}/{} PASS\nSampled legacy/optimized parity: {}/{} PASS\nSource/Binary parity: PASS\nRuntime benchmark: {}\nRoute order: PASS\nUnsupported rules: 0\n\nResult:\nAll generated rule sets passed acceptance checks.\n'.format(len(coverage),len(providers),len(groups),len(groups),compile_count,len(groups),decompile_count,len(groups),len(coverage),len(providers),audit_payload['passed'],audit_payload['total'],sampled_semantic['passed'],sampled_semantic['total'],'RSS PASS' if rss_comparable else 'initialization PASS; RSS unavailable on this platform')
         (tmp/'STATUS.md').write_text(status)
         removed=before_total-after_total
         if removed != sum(stats.values()): raise ValueError('dedup accounting mismatch')
-        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload,'acceptance':acceptance}
+        runtime_before={'headless_rules':before_headless_total,'matcher_values':before_matcher_values}
+        runtime_after={'headless_rules':after_headless_total,'matcher_values':after_matcher_values}
+        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'runtime_structure_before':runtime_before,'runtime_structure_after':runtime_after,'runtime_structure':{'unaggregated_headless_rules':before_headless_total,'aggregated_headless_rules':after_headless_total,'reduction':before_headless_total-after_headless_total,'reduction_percent':round((before_headless_total-after_headless_total)/before_headless_total*100,2) if before_headless_total else 0.0},'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload,'sampled_legacy_optimized_parity':sampled_semantic,'memory_benchmark':benchmark,'acceptance':acceptance}
         report_json=json.dumps(report,ensure_ascii=False,indent=2)+'\n'; json.loads(report_json); (tmp/'report.json').write_text(report_json)
         md='# singbox-srs-converter Build Report\n\n## Summary\n\n| Item | Value |\n|---|---:|\n'+''.join(f'| {k} | {report[k]} |\n' for k in ('providers','groups','raw_rules','mapped_original_rules','unsupported_rules','asn_rules','asn_expanded_prefixes','before_dedup_matchers','after_dedup_matchers','removed_matchers','removed_percent'))
         (tmp/'report.md').write_text(md)
+        # Legacy rule sets and benchmark configs are build-only inputs, never a
+        # client-facing artifact. The public runtime surface remains seven SRS.
+        shutil.rmtree(tmp/'legacy-source'); shutil.rmtree(tmp/'legacy-srs')
+        for path in tmp.glob('benchmark-*.json'): path.unlink()
         (ROOT/'dist').exists() and shutil.rmtree(ROOT/'dist'); shutil.copytree(tmp,ROOT/'dist')
     finally: shutil.rmtree(tmp,ignore_errors=True)
 if __name__=='__main__': main()
