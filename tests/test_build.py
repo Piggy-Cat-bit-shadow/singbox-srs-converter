@@ -2,6 +2,9 @@ import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
 from build import parse, dedup, serialize_source_rules, derive_groups
+from validate_artifacts import expected_provider_names, check
+import json
+import tempfile
 
 class BuildTests(unittest.TestCase):
     def test_domain_types(self):
@@ -76,5 +79,49 @@ class BuildTests(unittest.TestCase):
     def test_groups_come_from_rules_order(self):
         cfg={'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT','RULE-SET,C,🤖 AI','RULE-SET,D,DIRECT','RULE-SET,E,⚡ 海外高速','RULE-SET,F,REJECT-DROP','RULE-SET,G,DIRECT','RULE-SET,H,DIRECT,no-resolve']}
         self.assertEqual([g['providers'] for g in derive_groups(cfg)], [['A','B'],['C'],['D'],['E'],['F'],['G'],['H']])
+
+    def test_provider_count_follows_consumed_rule_sets(self):
+        cfg={'rule-providers': {'A': {}, 'B': {}}, 'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT']}
+        self.assertEqual(expected_provider_names(cfg), {'A','B'})
+        cfg['rule-providers'].pop('B')
+        cfg['rules'].pop()
+        self.assertEqual(expected_provider_names(cfg), {'A'})
+
+    def test_unused_provider_is_not_counted(self):
+        cfg={'rule-providers': {'A': {}, 'UNUSED': {}}, 'rules':['RULE-SET,A,DIRECT']}
+        self.assertEqual(expected_provider_names(cfg), {'A'})
+
+    def test_missing_artifact_and_audit_fail_with_reason(self):
+        cfg={'rule-providers': {'A': {}}, 'rules':['RULE-SET,A,DIRECT']}
+        with tempfile.TemporaryDirectory() as td:
+            dist=Path(td); (dist/'source').mkdir(); (dist/'srs').mkdir()
+            (dist/'report.json').write_text(json.dumps({'providers':1,'groups':1,'unsupported_rules':0}))
+            (dist/'semantic-audit.json').write_text(json.dumps({'failed':1,'passed':0,'total':1,'route_order':['direct-pre']}))
+            (dist/'memory-benchmark.json').write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'expected 1 source JSON'):
+                check(cfg, dist)
+
+    def test_source_srs_tag_mismatch_fails(self):
+        cfg={'rule-providers': {'A': {}}, 'rules':['RULE-SET,A,DIRECT']}
+        with tempfile.TemporaryDirectory() as td:
+            dist=Path(td); (dist/'source').mkdir(); (dist/'srs').mkdir()
+            for name, value in [('report.json', {'providers':1,'groups':1,'unsupported_rules':0}), ('semantic-audit.json', {'failed':0,'passed':1,'total':1,'route_order':['direct-pre']}), ('memory-benchmark.json', {'rss_comparable':True,'optimized':{'max_rss':1},'legacy':{'max_rss':2}})]:
+                (dist/name).write_text(json.dumps(value))
+            (dist/'source'/'direct-pre.json').write_text('{}')
+            (dist/'srs'/'wrong.srs').write_bytes(b'')
+            with self.assertRaisesRegex(ValueError, 'missing SRS artifact'):
+                check(cfg, dist)
+
+    def test_semantic_audit_failure_is_reported(self):
+        cfg={'rule-providers': {'A': {}}, 'rules':['RULE-SET,A,DIRECT']}
+        with tempfile.TemporaryDirectory() as td:
+            dist=Path(td); (dist/'source').mkdir(); (dist/'srs').mkdir()
+            (dist/'source'/'direct-pre.json').write_text('{}')
+            (dist/'srs'/'direct-pre.srs').write_bytes(b'placeholder')
+            (dist/'report.json').write_text(json.dumps({'providers':1,'groups':1,'unsupported_rules':0,'acceptance':{'source_binary_parity':True,'route_coherence':True}}))
+            (dist/'semantic-audit.json').write_text(json.dumps({'failed':2,'passed':3,'total':5,'route_order':['direct-pre']}))
+            (dist/'memory-benchmark.json').write_text(json.dumps({'rss_comparable':True,'optimized':{'max_rss':1},'legacy':{'max_rss':2}}))
+            with self.assertRaisesRegex(ValueError, 'semantic audit failed: 2/5'):
+                check(cfg, dist)
 
 if __name__ == '__main__': unittest.main()
