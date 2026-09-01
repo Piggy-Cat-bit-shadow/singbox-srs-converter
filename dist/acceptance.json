@@ -1,0 +1,361 @@
+{
+  "version": 1,
+  "input_sha256": "63de164469439988034e21a84a97faeb6f96dbcdc63dd9eb80b8c224fc1f4e49",
+  "provider_coverage": {
+    "Lan": {
+      "group": "direct-pre",
+      "raw_rules": 140,
+      "converted_matchers": 140,
+      "headless_rules": 140
+    },
+    "private": {
+      "group": "direct-pre",
+      "raw_rules": 130,
+      "converted_matchers": 130,
+      "headless_rules": 13
+    },
+    "me": {
+      "group": "ai",
+      "raw_rules": 15,
+      "converted_matchers": 15,
+      "headless_rules": 15
+    },
+    "AppleProxy": {
+      "group": "ai",
+      "raw_rules": 40,
+      "converted_matchers": 40,
+      "headless_rules": 40
+    },
+    "AppleIntelligence": {
+      "group": "ai",
+      "raw_rules": 10,
+      "converted_matchers": 10,
+      "headless_rules": 10
+    },
+    "openai": {
+      "group": "ai",
+      "raw_rules": 35,
+      "converted_matchers": 1118,
+      "headless_rules": 35
+    },
+    "claude": {
+      "group": "ai",
+      "raw_rules": 3,
+      "converted_matchers": 3,
+      "headless_rules": 3
+    },
+    "Anthropic": {
+      "group": "ai",
+      "raw_rules": 3,
+      "converted_matchers": 3,
+      "headless_rules": 1
+    },
+    "gemini": {
+      "group": "ai",
+      "raw_rules": 13,
+      "converted_matchers": 13,
+      "headless_rules": 13
+    },
+    "AI": {
+      "group": "ai",
+      "raw_rules": 217,
+      "converted_matchers": 217,
+      "headless_rules": 185
+    },
+    "cloudflare": {
+      "group": "ai",
+      "raw_rules": 30,
+      "converted_matchers": 30,
+      "headless_rules": 30
+    },
+    "GoogleVoice": {
+      "group": "ai",
+      "raw_rules": 1,
+      "converted_matchers": 1,
+      "headless_rules": 1
+    },
+    "Crypto": {
+      "group": "ai",
+      "raw_rules": 204,
+      "converted_matchers": 204,
+      "headless_rules": 204
+    },
+    "IPCheck": {
+      "group": "ai",
+      "raw_rules": 25,
+      "converted_matchers": 25,
+      "headless_rules": 25
+    },
+    "paypal": {
+      "group": "ai",
+      "raw_rules": 247,
+      "converted_matchers": 247,
+      "headless_rules": 247
+    },
+    "wechat": {
+      "group": "direct-middle",
+      "raw_rules": 31,
+      "converted_matchers": 224,
+      "headless_rules": 31
+    },
+    "apple": {
+      "group": "direct-middle",
+      "raw_rules": 165,
+      "converted_matchers": 165,
+      "headless_rules": 165
+    },
+    "icloud": {
+      "group": "direct-middle",
+      "raw_rules": 53,
+      "converted_matchers": 53,
+      "headless_rules": 53
+    },
+    "qcloud": {
+      "group": "direct-middle",
+      "raw_rules": 347,
+      "converted_matchers": 347,
+      "headless_rules": 347
+    },
+    "Scholar-China": {
+      "group": "direct-middle",
+      "raw_rules": 7,
+      "converted_matchers": 7,
+      "headless_rules": 7
+    },
+    "Scholar-Foreign": {
+      "group": "overseas",
+      "raw_rules": 3,
+      "converted_matchers": 3,
+      "headless_rules": 3
+    },
+    "Scholar": {
+      "group": "overseas",
+      "raw_rules": 231,
+      "converted_matchers": 231,
+      "headless_rules": 231
+    },
+    "Telegram": {
+      "group": "overseas",
+      "raw_rules": 46,
+      "converted_matchers": 59,
+      "headless_rules": 46
+    },
+    "github": {
+      "group": "overseas",
+      "raw_rules": 31,
+      "converted_matchers": 31,
+      "headless_rules": 31
+    },
+    "GoogleEarth": {
+      "group": "overseas",
+      "raw_rules": 16,
+      "converted_matchers": 16,
+      "headless_rules": 16
+    },
+    "WhatsApp": {
+      "group": "overseas",
+      "raw_rules": 17,
+      "converted_matchers": 17,
+      "headless_rules": 17
+    },
+    "Discord": {
+      "group": "overseas",
+      "raw_rules": 29,
+      "converted_matchers": 29,
+      "headless_rules": 29
+    },
+    "netflix": {
+      "group": "overseas",
+      "raw_rules": 38,
+      "converted_matchers": 38,
+      "headless_rules": 38
+    },
+    "disney": {
+      "group": "overseas",
+      "raw_rules": 174,
+      "converted_matchers": 174,
+      "headless_rules": 174
+    },
+    "primevideo": {
+      "group": "overseas",
+      "raw_rules": 26,
+      "converted_matchers": 26,
+      "headless_rules": 26
+    },
+    "GoogleDrive": {
+      "group": "overseas",
+      "raw_rules": 6,
+      "converted_matchers": 6,
+      "headless_rules": 6
+    },
+    "OneDrive": {
+      "group": "overseas",
+      "raw_rules": 18,
+      "converted_matchers": 18,
+      "headless_rules": 18
+    },
+    "Dropbox": {
+      "group": "overseas",
+      "raw_rules": 17,
+      "converted_matchers": 17,
+      "headless_rules": 17
+    },
+    "MEGA": {
+      "group": "overseas",
+      "raw_rules": 14,
+      "converted_matchers": 14,
+      "headless_rules": 14
+    },
+    "youtube": {
+      "group": "overseas",
+      "raw_rules": 183,
+      "converted_matchers": 183,
+      "headless_rules": 183
+    },
+    "Instagram": {
+      "group": "overseas",
+      "raw_rules": 4,
+      "converted_matchers": 4,
+      "headless_rules": 4
+    },
+    "Facebook": {
+      "group": "overseas",
+      "raw_rules": 570,
+      "converted_matchers": 604,
+      "headless_rules": 564
+    },
+    "Twitter": {
+      "group": "overseas",
+      "raw_rules": 33,
+      "converted_matchers": 33,
+      "headless_rules": 33
+    },
+    "Reddit": {
+      "group": "overseas",
+      "raw_rules": 8,
+      "converted_matchers": 8,
+      "headless_rules": 8
+    },
+    "Spotify": {
+      "group": "overseas",
+      "raw_rules": 30,
+      "converted_matchers": 30,
+      "headless_rules": 30
+    },
+    "tiktok": {
+      "group": "overseas",
+      "raw_rules": 32,
+      "converted_matchers": 32,
+      "headless_rules": 32
+    },
+    "google": {
+      "group": "overseas",
+      "raw_rules": 701,
+      "converted_matchers": 701,
+      "headless_rules": 698
+    },
+    "global": {
+      "group": "overseas",
+      "raw_rules": 35036,
+      "converted_matchers": 35036,
+      "headless_rules": 33133
+    },
+    "AWAvenueAds": {
+      "group": "ads",
+      "raw_rules": 902,
+      "converted_matchers": 902,
+      "headless_rules": 902
+    },
+    "HageziAds": {
+      "group": "ads",
+      "raw_rules": 83596,
+      "converted_matchers": 83596,
+      "headless_rules": 83071
+    },
+    "AntiAD": {
+      "group": "ads",
+      "raw_rules": 100977,
+      "converted_matchers": 100977,
+      "headless_rules": 100967
+    },
+    "DouYin": {
+      "group": "direct-cn",
+      "raw_rules": 13,
+      "converted_matchers": 13,
+      "headless_rules": 13
+    },
+    "BiliBili": {
+      "group": "direct-cn",
+      "raw_rules": 129,
+      "converted_matchers": 129,
+      "headless_rules": 129
+    },
+    "BaiDuTieBa": {
+      "group": "direct-cn",
+      "raw_rules": 32,
+      "converted_matchers": 32,
+      "headless_rules": 32
+    },
+    "alibaba-domain": {
+      "group": "direct-cn",
+      "raw_rules": 1266,
+      "converted_matchers": 1266,
+      "headless_rules": 1266
+    },
+    "alibaba": {
+      "group": "direct-cn",
+      "raw_rules": 55,
+      "converted_matchers": 55,
+      "headless_rules": 55
+    },
+    "chinamax": {
+      "group": "direct-cn",
+      "raw_rules": 123877,
+      "converted_matchers": 124070,
+      "headless_rules": 122619
+    },
+    "cn-ip": {
+      "group": "direct-cn-ip",
+      "raw_rules": 9651,
+      "converted_matchers": 9651,
+      "headless_rules": 9651
+    }
+  },
+  "providers_included": 53,
+  "providers_total": 53,
+  "segments": 7,
+  "srs_compile": {
+    "passed": 7,
+    "total": 7
+  },
+  "srs_decompile": {
+    "passed": 7,
+    "total": 7
+  },
+  "semantic_regression": {
+    "passed": 21,
+    "total": 21,
+    "failed": 0
+  },
+  "source_binary_parity": true,
+  "route_coherence": true,
+  "source_sha256": {
+    "ai": "9872171e9b4d24dd850ac727939003bb3ad37a2ca73e143d5b7cf448b0d82153",
+    "direct-pre": "8f69ac615bc905ede1d05d234cc4ebae43ca7390434c93dfcfa9dac716b70080",
+    "direct-cn": "459280815d266ae7c30f6b7226d621ac3532ac9dd77a49f8c0f88086b42dc4b5",
+    "direct-middle": "78c8c03902956be8736ce7ec00914c9248d5a0b4c39e7300bfff02b317f92dee",
+    "direct-cn-ip": "74a562f957b89dec9059826387ae28fa3a25b52a537970977fb1fe40eb75ed5a",
+    "overseas": "991732715d3d26a39ceb5f20f2801fe12115513b080321f9d806984e0209441f",
+    "ads": "1654f1271432c78af3ac15bba707b363b029ece71c93d19c9529ec8604531762"
+  },
+  "srs_sha256": {
+    "direct-cn": "55d20b001e409f5e19eff55d9d364ce0d736b1b018d771bd9baee103da97b06e",
+    "overseas": "76341fa68d012a1a8c2a1829a8b8f9312dd102f5a6299188a41e46fcd80ca60d",
+    "ads": "3226c6a2de4fe9d5a9e92ecd636718638aa5a87dd8de423bcf6e76063e50c551",
+    "direct-cn-ip": "b57b714c2355991d689221b5ca1f8126aea8a8ec06910e00ca4aaacb45efb1d6",
+    "direct-pre": "ae3e75ea61aa2aa2bd4e08233ef6e58d9ece1e37540d7050ed889008e44882c7",
+    "ai": "cb1b07187e05b8f70538dcc77f1ee07b9b4f1b807d523af0b7118ccb676e9b51",
+    "direct-middle": "a487c20df58e7a0430d13cdc9566debf556bfaa40f2fd4604a1a63575ded767b"
+  },
+  "route_sha256": "a1e408f389b09026d9ea4f803308cdd4d176286392d2df190c97a513c9fdfd2a"
+}
