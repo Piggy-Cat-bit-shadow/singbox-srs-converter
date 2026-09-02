@@ -4,14 +4,14 @@
 
 | Item | Value |
 |---|---:|
-| providers | 53 |
+| providers | 51 |
 | groups | 7 |
-| raw_rules | 359477 |
-| mapped_original_rules | 359477 |
+| raw_rules | 274979 |
+| mapped_original_rules | 274979 |
 | unsupported_rules | 0 |
 | asn_rules | 9 |
 | asn_expanded_prefixes | 1254 |
-| before_dedup_matchers | 360916 |
-| after_dedup_matchers | 303830 |
-| removed_matchers | 57086 |
-| removed_percent | 15.82 |
+| before_dedup_matchers | 276418 |
+| after_dedup_matchers | 267024 |
+| removed_matchers | 9394 |
+| removed_percent | 3.4 |

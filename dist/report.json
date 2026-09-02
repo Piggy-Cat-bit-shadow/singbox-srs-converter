@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 linux/amd64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0,with_purego\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: disabled",
-  "providers": 53,
+  "providers": 51,
   "groups": 7,
   "segments": [
     {
@@ -12,7 +12,7 @@
         "Lan",
         "private"
       ],
-      "top_level_index": 1
+      "top_level_index": 4
     },
     {
       "tag": "ai",
@@ -33,7 +33,7 @@
         "IPCheck",
         "paypal"
       ],
-      "top_level_index": 3
+      "top_level_index": 6
     },
     {
       "tag": "direct-middle",
@@ -46,7 +46,7 @@
         "qcloud",
         "Scholar-China"
       ],
-      "top_level_index": 16
+      "top_level_index": 19
     },
     {
       "tag": "overseas",
@@ -77,18 +77,16 @@
         "google",
         "global"
       ],
-      "top_level_index": 21
+      "top_level_index": 24
     },
     {
       "tag": "ads",
       "policy": "REJECT-DROP",
       "modifiers": [],
       "providers": [
-        "AWAvenueAds",
-        "HageziAds",
         "AntiAD"
       ],
-      "top_level_index": 44
+      "top_level_index": 47
     },
     {
       "tag": "direct-cn",
@@ -102,7 +100,7 @@
         "alibaba",
         "chinamax"
       ],
-      "top_level_index": 47
+      "top_level_index": 48
     },
     {
       "tag": "direct-cn-ip",
@@ -113,11 +111,11 @@
       "providers": [
         "cn-ip"
       ],
-      "top_level_index": 53
+      "top_level_index": 54
     }
   ],
-  "raw_rules": 359477,
-  "mapped_original_rules": 359477,
+  "raw_rules": 274979,
+  "mapped_original_rules": 274979,
   "unsupported_rules": 0,
   "semantic_limitations": [
     "Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted."
@@ -126,27 +124,27 @@
   "asn_expanded_prefixes": 1254,
   "ip_rules_no_resolve": 243,
   "ip_rules_without_no_resolve": 23578,
-  "before_dedup_matchers": 360916,
-  "after_dedup_matchers": 303830,
-  "removed_matchers": 57086,
-  "removed_percent": 15.82,
+  "before_dedup_matchers": 276418,
+  "after_dedup_matchers": 267024,
+  "removed_matchers": 9394,
+  "removed_percent": 3.4,
   "runtime_structure_before": {
-    "headless_rules": 360916,
-    "matcher_values": 360916
+    "headless_rules": 276418,
+    "matcher_values": 276418
   },
   "runtime_structure_after": {
     "headless_rules": 13,
-    "matcher_values": 303830
+    "matcher_values": 267024
   },
   "runtime_structure": {
-    "unaggregated_headless_rules": 360916,
+    "unaggregated_headless_rules": 276418,
     "aggregated_headless_rules": 13,
-    "reduction": 360903,
+    "reduction": 276405,
     "reduction_percent": 100.0
   },
   "dedup": {
-    "exact_duplicates_removed": 3864,
-    "domain_covered_by_suffix": 47284,
+    "exact_duplicates_removed": 3329,
+    "domain_covered_by_suffix": 127,
     "suffix_covered_by_parent_suffix": 5838,
     "ipcidr_duplicates_removed": 0,
     "ipcidr_covered_by_parent": 0,
@@ -278,35 +276,35 @@
       "srs_bytes_after": 175478
     },
     "ads": {
-      "provider_count": 3,
-      "raw_rules": 185475,
-      "normalized_matchers": 185475,
-      "optimized_matchers": 137780,
-      "before_dedup_matchers": 185475,
-      "after_dedup_matchers": 137780,
-      "dedup_removed": 47695,
-      "unaggregated_headless_rules": 185475,
+      "provider_count": 1,
+      "raw_rules": 100977,
+      "normalized_matchers": 100977,
+      "optimized_matchers": 100974,
+      "before_dedup_matchers": 100977,
+      "after_dedup_matchers": 100974,
+      "dedup_removed": 3,
+      "unaggregated_headless_rules": 100977,
       "aggregated_headless_rules": 1,
-      "matcher_values_before": 185475,
-      "matcher_values_after": 137780,
+      "matcher_values_before": 100977,
+      "matcher_values_after": 100974,
       "matcher_kinds_before": {
-        "domain": 84483,
-        "domain_suffix": 100987,
-        "domain_keyword": 5,
+        "domain": 0,
+        "domain_suffix": 100977,
+        "domain_keyword": 0,
         "domain_regex": 0,
         "ip_cidr": 0,
         "source_ip_cidr": 0
       },
       "matcher_kinds_after": {
-        "domain": 36801,
+        "domain": 0,
         "domain_suffix": 100974,
-        "domain_keyword": 5,
+        "domain_keyword": 0,
         "domain_regex": 0,
         "ip_cidr": 0,
         "source_ip_cidr": 0
       },
-      "srs_bytes_before": 1543089,
-      "srs_bytes_after": 1036511
+      "srs_bytes_before": 897036,
+      "srs_bytes_after": 782770
     },
     "direct-cn": {
       "provider_count": 6,
@@ -563,18 +561,6 @@
       "parsed_count": 14,
       "sha256": "dd3ccf10d0ec9ce2c74387c02bacd50a726c2bc79c543a51727d850f07e313ed",
       "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MEGA/MEGA.yaml"
-    },
-    "AWAvenueAds": {
-      "raw_count": 902,
-      "parsed_count": 902,
-      "sha256": "73463cb77495d1e3feec4aae8f64d9ddb5d95e048f342270a6e268e65a24a34b",
-      "source": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml"
-    },
-    "HageziAds": {
-      "raw_count": 83596,
-      "parsed_count": 83596,
-      "sha256": "5a04bb23e5b0d4d29e6683fea31dc986383420333f53e67bd659ac87b348461a",
-      "source": "https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/domains/light.txt"
     },
     "AntiAD": {
       "raw_count": 100977,
@@ -915,20 +901,6 @@
       "path": "./ruleset/MEGA.yaml",
       "sha256": "dd3ccf10d0ec9ce2c74387c02bacd50a726c2bc79c543a51727d850f07e313ed",
       "raw_rules": 14
-    },
-    "AWAvenueAds": {
-      "type": "http",
-      "url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml",
-      "path": "./ruleset/AWAvenueAds.yaml",
-      "sha256": "73463cb77495d1e3feec4aae8f64d9ddb5d95e048f342270a6e268e65a24a34b",
-      "raw_rules": 902
-    },
-    "HageziAds": {
-      "type": "http",
-      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists-legacy/main/domains/light.txt",
-      "path": "./ruleset/HageziAds.txt",
-      "sha256": "5a04bb23e5b0d4d29e6683fea31dc986383420333f53e67bd659ac87b348461a",
-      "raw_rules": 83596
     },
     "AntiAD": {
       "type": "http",
@@ -1281,8 +1253,8 @@
     ]
   },
   "sampled_legacy_optimized_parity": {
-    "total": 127,
-    "passed": 127,
+    "total": 123,
+    "passed": 123,
     "failed": 0,
     "cases": [
       {
@@ -2266,58 +2238,6 @@
         "passed": true
       },
       {
-        "provider": "AWAvenueAds",
-        "kind": "domain",
-        "value": "1500020991.vodplayer.wxamedia.com",
-        "legacy_matches": [
-          "ads",
-          "direct-cn"
-        ],
-        "optimized_matches": [
-          "ads",
-          "direct-cn"
-        ],
-        "passed": true
-      },
-      {
-        "provider": "AWAvenueAds",
-        "kind": "domain_suffix",
-        "value": "probe.1rtb.com",
-        "legacy_matches": [
-          "ads"
-        ],
-        "optimized_matches": [
-          "ads"
-        ],
-        "passed": true
-      },
-      {
-        "provider": "AWAvenueAds",
-        "kind": "domain_keyword",
-        "value": "probe--ad.sm.cn.invalid",
-        "legacy_matches": [
-          "direct-pre",
-          "ads"
-        ],
-        "optimized_matches": [
-          "direct-pre",
-          "ads"
-        ],
-        "passed": true
-      },
-      {
-        "provider": "HageziAds",
-        "kind": "domain",
-        "value": "0-0-0checkmate.com",
-        "legacy_matches": [
-          "ads"
-        ],
-        "optimized_matches": [
-          "ads"
-        ],
-        "passed": true
-      },
-      {
         "provider": "AntiAD",
         "kind": "domain_suffix",
         "value": "probe.000491b06a.com",
@@ -2950,57 +2870,57 @@
     "rss_unit": "kb",
     "rss_comparable": true,
     "legacy": {
-      "max_rss": 248624,
+      "max_rss": 204132,
       "rss_unit": "kb",
-      "init_ms": 1414.35,
+      "init_ms": 1111.22,
       "runs": 3,
       "samples": [
         {
-          "max_rss": 250808,
-          "init_ms": 1414.35
+          "max_rss": 205380,
+          "init_ms": 1108.74
         },
         {
-          "max_rss": 248624,
-          "init_ms": 1314.41
+          "max_rss": 204132,
+          "init_ms": 1163.92
         },
         {
-          "max_rss": 247732,
-          "init_ms": 1416.24
+          "max_rss": 201848,
+          "init_ms": 1111.22
         }
       ]
     },
     "optimized": {
-      "max_rss": 64988,
+      "max_rss": 65952,
       "rss_unit": "kb",
-      "init_ms": 101.31,
+      "init_ms": 101.48,
       "runs": 3,
       "samples": [
         {
-          "max_rss": 64988,
-          "init_ms": 101.27
+          "max_rss": 66296,
+          "init_ms": 101.3
         },
         {
-          "max_rss": 65440,
-          "init_ms": 101.34
+          "max_rss": 65952,
+          "init_ms": 101.48
         },
         {
-          "max_rss": 64572,
-          "init_ms": 101.31
+          "max_rss": 65612,
+          "init_ms": 101.52
         }
       ]
     },
-    "legacy_max_rss_kb": 248624,
-    "optimized_max_rss_kb": 64988,
-    "median_max_rss_kb": 64988,
-    "legacy_init_ms": 1414.35,
-    "optimized_init_ms": 101.31,
-    "median_init_ms": 101.31,
-    "rss_reduction_percent": 73.86,
-    "init_reduction_percent": 92.84
+    "legacy_max_rss_kb": 204132,
+    "optimized_max_rss_kb": 65952,
+    "median_max_rss_kb": 65952,
+    "legacy_init_ms": 1111.22,
+    "optimized_init_ms": 101.48,
+    "median_init_ms": 101.48,
+    "rss_reduction_percent": 67.69,
+    "init_reduction_percent": 90.87
   },
   "acceptance": {
     "version": 1,
-    "input_sha256": "63de164469439988034e21a84a97faeb6f96dbcdc63dd9eb80b8c224fc1f4e49",
+    "input_sha256": "0c438e17e35914df093cb40634de94cefa7919c5b67ac3c1d5900ffa14e0c55e",
     "provider_coverage": {
       "Lan": {
         "group": "direct-pre",
@@ -3346,27 +3266,11 @@
         "headless_rules": 2,
         "coverage": "emitted"
       },
-      "AWAvenueAds": {
-        "group": "ads",
-        "raw_rules": 902,
-        "converted_matchers": 902,
-        "surviving_matchers": 32,
-        "headless_rules": 1,
-        "coverage": "emitted"
-      },
-      "HageziAds": {
-        "group": "ads",
-        "raw_rules": 83596,
-        "converted_matchers": 83596,
-        "surviving_matchers": 36784,
-        "headless_rules": 1,
-        "coverage": "emitted"
-      },
       "AntiAD": {
         "group": "ads",
         "raw_rules": 100977,
         "converted_matchers": 100977,
-        "surviving_matchers": 100964,
+        "surviving_matchers": 100974,
         "headless_rules": 1,
         "coverage": "emitted"
       },
@@ -3427,8 +3331,8 @@
         "coverage": "emitted"
       }
     },
-    "providers_included": 53,
-    "providers_total": 53,
+    "providers_included": 51,
+    "providers_total": 51,
     "segments": 7,
     "srs_compile": {
       "passed": 7,
@@ -3444,8 +3348,8 @@
       "failed": 0
     },
     "sampled_legacy_optimized_parity": {
-      "passed": 127,
-      "total": 127,
+      "passed": 123,
+      "total": 123,
       "failed": 0
     },
     "source_binary_parity": true,
@@ -3457,12 +3361,12 @@
       "direct-middle": "dbe76b413cd18c54e09c0a28e968aaebb72cf0c3d8288bb51ac1ecb8f3b0548f",
       "direct-cn-ip": "f5fe51ad9ef152f9919c6c22091a32668853ef3fe6453daec42794982798cee9",
       "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304",
-      "ads": "a9ce94ce9678157e51fe2ad200b863e05f97a06ba8a94945a56dd15a874a68e6"
+      "ads": "c41b71c96d36b2519478e3e3b2b3132272525e53795bec5def5227c6c52bd9a2"
     },
     "srs_sha256": {
       "direct-cn": "e74c95305bb4cca9ffe8a22fd8a6fbee3a3ac0078473d812c994c0b6ea948f8b",
       "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
-      "ads": "c6d946d4098d090b54ae055dea4789dcfa1989dc3f5499440a3d8e587a8290b8",
+      "ads": "6695fea00508d3169916016c20e2f7b8628931003a6d837bd93aa733ccdcd1aa",
       "direct-cn-ip": "ec0c240a4d86dac60881e8d5a03ded84fb54cb4d4a219463a8b59b3104112e52",
       "direct-pre": "ad279d5cbe0d257dfe684ae29272224389f5cf6c65bc867b021e2dd7cb6703ea",
       "ai": "78cfa994246eae708a1adb9d61aa92fcf91e8ed06dd36d001bb3964986d55e3b",
