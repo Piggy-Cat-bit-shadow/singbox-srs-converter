@@ -12,7 +12,7 @@
         "Lan",
         "private"
       ],
-      "top_level_index": 4
+      "top_level_index": 1
     },
     {
       "tag": "ai",
@@ -33,7 +33,7 @@
         "IPCheck",
         "paypal"
       ],
-      "top_level_index": 6
+      "top_level_index": 3
     },
     {
       "tag": "direct-middle",
@@ -46,7 +46,7 @@
         "qcloud",
         "Scholar-China"
       ],
-      "top_level_index": 19
+      "top_level_index": 16
     },
     {
       "tag": "overseas",
@@ -77,7 +77,7 @@
         "google",
         "global"
       ],
-      "top_level_index": 24
+      "top_level_index": 21
     },
     {
       "tag": "ads",
@@ -86,7 +86,7 @@
       "providers": [
         "AntiAD"
       ],
-      "top_level_index": 47
+      "top_level_index": 44
     },
     {
       "tag": "direct-cn",
@@ -100,7 +100,7 @@
         "alibaba",
         "chinamax"
       ],
-      "top_level_index": 48
+      "top_level_index": 45
     },
     {
       "tag": "direct-cn-ip",
@@ -111,7 +111,7 @@
       "providers": [
         "cn-ip"
       ],
-      "top_level_index": 54
+      "top_level_index": 51
     }
   ],
   "raw_rules": 274979,
@@ -2870,57 +2870,57 @@
     "rss_unit": "kb",
     "rss_comparable": true,
     "legacy": {
-      "max_rss": 204132,
+      "max_rss": 206468,
       "rss_unit": "kb",
-      "init_ms": 1111.22,
+      "init_ms": 807.24,
       "runs": 3,
       "samples": [
         {
-          "max_rss": 205380,
-          "init_ms": 1108.74
+          "max_rss": 202080,
+          "init_ms": 807.24
         },
         {
-          "max_rss": 204132,
-          "init_ms": 1163.92
+          "max_rss": 206468,
+          "init_ms": 807.43
         },
         {
-          "max_rss": 201848,
-          "init_ms": 1111.22
+          "max_rss": 206860,
+          "init_ms": 758.4
         }
       ]
     },
     "optimized": {
-      "max_rss": 65952,
+      "max_rss": 65660,
       "rss_unit": "kb",
-      "init_ms": 101.48,
+      "init_ms": 101.12,
       "runs": 3,
       "samples": [
         {
-          "max_rss": 66296,
-          "init_ms": 101.3
+          "max_rss": 64980,
+          "init_ms": 101.1
         },
         {
-          "max_rss": 65952,
-          "init_ms": 101.48
+          "max_rss": 65660,
+          "init_ms": 101.22
         },
         {
-          "max_rss": 65612,
-          "init_ms": 101.52
+          "max_rss": 66620,
+          "init_ms": 101.12
         }
       ]
     },
-    "legacy_max_rss_kb": 204132,
-    "optimized_max_rss_kb": 65952,
-    "median_max_rss_kb": 65952,
-    "legacy_init_ms": 1111.22,
-    "optimized_init_ms": 101.48,
-    "median_init_ms": 101.48,
-    "rss_reduction_percent": 67.69,
-    "init_reduction_percent": 90.87
+    "legacy_max_rss_kb": 206468,
+    "optimized_max_rss_kb": 65660,
+    "median_max_rss_kb": 65660,
+    "legacy_init_ms": 807.24,
+    "optimized_init_ms": 101.12,
+    "median_init_ms": 101.12,
+    "rss_reduction_percent": 68.2,
+    "init_reduction_percent": 87.47
   },
   "acceptance": {
     "version": 1,
-    "input_sha256": "0c438e17e35914df093cb40634de94cefa7919c5b67ac3c1d5900ffa14e0c55e",
+    "input_sha256": "49dfa66cec3999537c1779d57cf13caf7d2cc8fea15064d7419af95b95498f34",
     "provider_coverage": {
       "Lan": {
         "group": "direct-pre",
