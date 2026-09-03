@@ -265,13 +265,39 @@ def serialize_source_rules(matchers):
             selected={k:list(dict.fromkeys(fields[k])) for k in group if fields.get(k)}
             if selected: rules.append(selected)
     return rules
-def semantic_audit(rule_dir, sb, groups, fmt='binary'):
-    corpus=[
-      ('youtube.com','overseas'),('www.youtube.com','overseas'),('music.youtube.com','overseas'),('ads.youtube.com','overseas'),
-      ('youtubei.googleapis.com','overseas'),('youtube.googleapis.com','overseas'),('googlevideo.com','overseas'),('r1---sn.googlevideo.com','overseas'),
-      ('ytimg.com','overseas'),('i.ytimg.com','overseas'),('ggpht.com','overseas'),('yt3.ggpht.com','overseas'),
-      ('chat.openai.com','ai'),('api.telegram.org','overseas'),('github.com','overseas'),('icloud.com','direct-middle'),('wechat.com','direct-middle'),('douyin.com','direct-cn'),
-      ('000dn.com','ads'),('001union.com','ads'),('002777.xyz','ads')]
+def semantic_audit(rule_dir, sb, groups, allms, fmt='binary'):
+    """Verify compiled route order using samples from the current rule sources.
+
+    Providers are intentionally live inputs.  A fixed list of domains turns a
+    legitimate upstream edit (for example, an ad domain being removed) into a
+    false CI regression.  Instead, select a deterministic representative from
+    every current segment and calculate its expected first match from the same
+    normalized matcher IR used to produce the rule sets.
+    """
+    def probe(m):
+        if m.kind == 'domain': return m.value
+        if m.kind == 'domain_suffix': return 'audit.' + m.value
+        if m.kind == 'domain_keyword': return 'audit-' + m.value + '.invalid'
+        if m.kind == 'domain_regex': return None
+        if m.kind in ('ip_cidr','source_ip_cidr'): return str(ipaddress.ip_network(m.value).network_address)
+        return None
+    def matches(m, value):
+        if m.kind == 'domain': return value == m.value
+        if m.kind == 'domain_suffix': return value == m.value or value.endswith('.' + m.value)
+        if m.kind == 'domain_keyword': return m.value in value
+        if m.kind == 'domain_regex': return bool(re.search(m.value, value))
+        if m.kind in ('ip_cidr','source_ip_cidr'):
+            try: return ipaddress.ip_address(value) in ipaddress.ip_network(m.value)
+            except ValueError: return False
+        return False
+    segment_matchers={g['tag']:[m for p in g['providers'] for m in allms[p]] for g in groups}
+    corpus=[]
+    for g in groups:
+        value=next((value for m in segment_matchers[g['tag']] if (value:=probe(m)) is not None),None)
+        if value is None: raise RuntimeError(f'semantic audit has no supported probe for segment {g["tag"]}')
+        expected=next((candidate['tag'] for candidate in groups if any(matches(m,value) for m in segment_matchers[candidate['tag']])) ,None)
+        if expected is None: raise RuntimeError(f'semantic audit could not derive expected route for {g["tag"]}')
+        corpus.append((value,expected))
     audit=[]
     for domain, expected in corpus:
         hits=[]
@@ -353,8 +379,8 @@ def main():
                 coverage[provider]={'group':g['tag'],'raw_rules':details[provider]['raw_count'],'converted_matchers':len(allms[provider]),'surviving_matchers':len(survivors),'headless_rules':len(serialize_source_rules(survivors)),'coverage':'emitted' if survivors else 'covered_by_same_segment'}
         route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':POLICY_OUTBOUNDS[g['policy']]}) for g in groups],'final':'overseas'}}
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
-        semantic=semantic_audit(tmp/'srs',a.sing_box,groups)
-        source_semantic=semantic_audit(tmp/'source',a.sing_box,groups,'source')
+        semantic=semantic_audit(tmp/'srs',a.sing_box,groups,allms)
+        source_semantic=semantic_audit(tmp/'source',a.sing_box,groups,allms,'source')
         if [x['first_match'] for x in semantic] != [x['first_match'] for x in source_semantic]: raise RuntimeError('source/binary semantic parity failed')
         sampled_semantic=compare_legacy_semantics(tmp/'legacy-srs',tmp/'srs',a.sing_box,groups,allms)
         failed=[x for x in semantic if not x['passed']]
