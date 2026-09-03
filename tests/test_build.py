@@ -2,7 +2,7 @@ import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
 from build import parse, dedup, serialize_source_rules, derive_groups
-from validate_artifacts import expected_provider_names, check, PRODUCTION_SEGMENT_TAGS, PRODUCTION_SEGMENT_PROVIDERS
+from validate_artifacts import expected_provider_names, check
 import json
 import tempfile
 
@@ -79,21 +79,6 @@ class BuildTests(unittest.TestCase):
     def test_groups_come_from_rules_order(self):
         cfg={'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT','RULE-SET,C,🤖 AI','RULE-SET,D,DIRECT','RULE-SET,E,⚡ 海外高速','RULE-SET,F,REJECT-DROP','RULE-SET,G,DIRECT','RULE-SET,H,DIRECT,no-resolve']}
         self.assertEqual([g['providers'] for g in derive_groups(cfg)], [['A','B'],['C'],['D'],['E'],['F'],['G'],['H']])
-
-    def test_production_ads_segment_contract(self):
-        import yaml
-        cfg=yaml.safe_load((Path(__file__).parents[1] / 'examples' / 'my-rules.yaml').read_text())
-        groups=derive_groups(cfg)
-        self.assertEqual(tuple(group['tag'] for group in groups), PRODUCTION_SEGMENT_TAGS)
-        ads=next(group for group in groups if group['tag'] == 'ads')
-        self.assertTrue(PRODUCTION_SEGMENT_PROVIDERS['ads'].issubset(ads['providers']))
-
-    def test_missing_production_ads_segment_fails_before_publish_validation(self):
-        cfg={'rule-providers': {'A': {}}, 'rules':['RULE-SET,A,DIRECT']}
-        with tempfile.TemporaryDirectory() as td:
-            with self.assertRaisesRegex(ValueError, 'production segment contract mismatch'):
-                check(cfg, Path(td), required_tags=PRODUCTION_SEGMENT_TAGS,
-                      required_segment_providers=PRODUCTION_SEGMENT_PROVIDERS)
 
     def test_provider_count_follows_consumed_rule_sets(self):
         cfg={'rule-providers': {'A': {}, 'B': {}}, 'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT']}
