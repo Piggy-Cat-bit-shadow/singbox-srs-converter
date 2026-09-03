@@ -2,13 +2,13 @@
 
 Input: examples/my-rules.yaml
 
-Providers: 51/51 included
-Segments: 7/7
-SRS compile: 7/7 PASS
-SRS decompile: 7/7 PASS
-Provider coverage: 51/51 PASS
-Semantic regression: 7/7 PASS
-Sampled legacy/optimized parity: 123/123 PASS
+Providers: 50/50 included
+Segments: 6/6
+SRS compile: 6/6 PASS
+SRS decompile: 6/6 PASS
+Provider coverage: 50/50 PASS
+Semantic regression: 6/6 PASS
+Sampled legacy/optimized parity: 122/122 PASS
 Source/Binary parity: PASS
 Runtime benchmark: RSS PASS
 Route order: PASS

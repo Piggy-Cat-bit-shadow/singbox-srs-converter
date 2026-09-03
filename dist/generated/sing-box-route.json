@@ -31,13 +31,6 @@
       },
       {
         "type": "remote",
-        "tag": "ads",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/ads.srs",
-        "update_interval": "1d"
-      },
-      {
-        "type": "remote",
         "tag": "direct-cn",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main/dist/srs/direct-cn.srs",
@@ -86,13 +79,6 @@
         ],
         "action": "route",
         "outbound": "overseas"
-      },
-      {
-        "rule_set": [
-          "ads"
-        ],
-        "action": "reject",
-        "method": "drop"
       },
       {
         "rule_set": [

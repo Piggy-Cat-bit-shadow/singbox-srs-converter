@@ -2,7 +2,7 @@
 
 | Metric | Legacy | Optimized | Reduction |
 |---|---:|---:|---:|
-| Max RSS (kb) | 205188 | 64656 | 68.49% |
-| Initialization (ms) | 555.86 | 50.65 | 90.89% |
+| Max RSS (kb) | 152204 | 62304 | 59.07% |
+| Initialization (ms) | 706.97 | 101.49 | 85.64% |
 
 Linux/macOS RSS is a comparative CI signal, not an iOS Packet Tunnel memory guarantee.
