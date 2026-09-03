@@ -5,11 +5,12 @@
     "ai",
     "direct-middle",
     "overseas",
+    "ads",
     "direct-cn",
     "direct-cn-ip"
   ],
-  "total": 6,
-  "passed": 6,
+  "total": 7,
+  "passed": 7,
   "failed": 0,
   "cases": [
     {
@@ -36,6 +37,7 @@
       "expected": "direct-middle",
       "matched_groups": [
         "direct-middle",
+        "ads",
         "direct-cn"
       ],
       "first_match": "direct-middle",
@@ -48,6 +50,15 @@
         "overseas"
       ],
       "first_match": "overseas",
+      "passed": true
+    },
+    {
+      "domain": "audit.000491b06a.com",
+      "expected": "ads",
+      "matched_groups": [
+        "ads"
+      ],
+      "first_match": "ads",
       "passed": true
     },
     {
