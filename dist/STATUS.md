@@ -10,7 +10,7 @@ Provider coverage: 50/50 PASS
 Semantic regression: 6/6 PASS
 Sampled legacy/optimized parity: 122/122 PASS
 Source/Binary parity: PASS
-Runtime benchmark: initialization PASS; RSS unavailable on this platform
+Runtime benchmark: RSS PASS
 Route order: PASS
 Unsupported rules: 0
 
