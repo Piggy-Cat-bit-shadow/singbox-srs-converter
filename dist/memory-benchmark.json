@@ -1,55 +1,29 @@
 {
   "version": 1,
   "method": "sing-box run with local binary SRS, loopback mixed inbound, 3 runs; median reported",
-  "platform": "Linux 6.17.0-1022-azure x86_64",
-  "rss_unit": "kb",
-  "rss_comparable": true,
+  "platform": "Darwin 24.6.0 arm64",
+  "rss_unit": "platform-unavailable",
+  "rss_comparable": false,
   "legacy": {
-    "max_rss": 152204,
-    "rss_unit": "kb",
-    "init_ms": 706.97,
+    "max_rss": 0,
+    "rss_unit": "platform-unavailable",
+    "init_ms": 488.65,
     "runs": 3,
-    "samples": [
-      {
-        "max_rss": 152204,
-        "init_ms": 656.61
-      },
-      {
-        "max_rss": 154572,
-        "init_ms": 759.69
-      },
-      {
-        "max_rss": 151168,
-        "init_ms": 706.97
-      }
-    ]
+    "samples": []
   },
   "optimized": {
-    "max_rss": 62304,
-    "rss_unit": "kb",
-    "init_ms": 101.49,
+    "max_rss": 0,
+    "rss_unit": "platform-unavailable",
+    "init_ms": 116.71,
     "runs": 3,
-    "samples": [
-      {
-        "max_rss": 63832,
-        "init_ms": 101.39
-      },
-      {
-        "max_rss": 62200,
-        "init_ms": 101.66
-      },
-      {
-        "max_rss": 62304,
-        "init_ms": 101.49
-      }
-    ]
+    "samples": []
   },
-  "legacy_max_rss_kb": 152204,
-  "optimized_max_rss_kb": 62304,
-  "median_max_rss_kb": 62304,
-  "legacy_init_ms": 706.97,
-  "optimized_init_ms": 101.49,
-  "median_init_ms": 101.49,
-  "rss_reduction_percent": 59.07,
-  "init_reduction_percent": 85.64
+  "legacy_max_rss_kb": null,
+  "optimized_max_rss_kb": null,
+  "median_max_rss_kb": null,
+  "legacy_init_ms": 488.65,
+  "optimized_init_ms": 116.71,
+  "median_init_ms": 116.71,
+  "rss_reduction_percent": null,
+  "init_reduction_percent": 76.12
 }

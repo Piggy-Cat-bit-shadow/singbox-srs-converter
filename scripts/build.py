@@ -6,36 +6,90 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-# Compatibility names for the current seven positional policy segments.  Provider
-# membership and ordering are always derived from the input rules list.
+# Compatibility names for the published segments in the current input.  These
+# are SRS artifact names, deliberately distinct from a user's outbound name.
 SEGMENT_TAGS={('DIRECT',(),1):'direct-pre',('🤖 AI',(),1):'ai',('DIRECT',(),2):'direct-middle',('⚡ 海外高速',(),1):'overseas',('REJECT-DROP',(),1):'ads',('DIRECT',(),3):'direct-cn',('DIRECT',('no-resolve',),1):'direct-cn-ip'}
-POLICY_OUTBOUNDS={'DIRECT':'direct','🤖 AI':'ai','⚡ 海外高速':'overseas'}
 SAMPLES={k:[] for k in ('exact_duplicates_removed','domain_covered_by_suffix','suffix_covered_by_parent_suffix','ipcidr_duplicates_removed','ipcidr_covered_by_parent','ip_collapse_reduction')}
 @dataclass(frozen=True)
 class M:
     kind:str; value:str; modifiers:tuple=(); provider:str=''; source:str=''; expanded_from:str|None=None
 
+@dataclass
+class TopLevelRule:
+    """One input `rules:` entry, before any SRS optimization is applied."""
+    index:int; raw:str; kind:str; policy:str; modifiers:tuple=(); provider:str|None=None
+    matchers:tuple[M,...]=(); segment_tag:str|None=None
+
+TOP_LEVEL_MODIFIERS={'no-resolve','src'}
+
+def policy_action(policy):
+    """Convert only Clash keywords; custom policy names are opaque strings."""
+    if policy == 'REJECT': return {'action':'reject','method':'default'}
+    if policy == 'REJECT-DROP': return {'action':'reject','method':'drop'}
+    return {'action':'route','outbound':'direct' if policy == 'DIRECT' else policy}
+
+def stable_segment_tag(policy, modifiers, ordinal):
+    known=SEGMENT_TAGS.get((policy, modifiers, ordinal))
+    if known: return known
+    # New artifacts must be URL-safe without ever changing the policy string.
+    digest=hashlib.sha256((policy+'\0'+','.join(modifiers)+'\0'+str(ordinal)).encode()).hexdigest()[:12]
+    return f'segment-{ordinal}-{digest}'
+
+def parse_top_level_rules(cfg):
+    """Parse every top-level Clash rule and fail before a rule can be dropped."""
+    result=[]
+    for index, value in enumerate(cfg.get('rules', [])):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f'rules[{index}]: rule must be a non-empty string: {value!r}')
+        raw=value.strip(); parts=raw.split(','); kind=parts[0].strip().upper()
+        if kind == 'MATCH':
+            if len(parts) != 2 or not parts[1]:
+                raise ValueError(f'rules[{index}]: malformed MATCH: {raw}')
+            result.append(TopLevelRule(index,raw,kind,parts[1]))
+            continue
+        if kind == 'RULE-SET':
+            if len(parts) < 3 or not parts[1] or not parts[2]:
+                raise ValueError(f'rules[{index}]: malformed RULE-SET: {raw}')
+            modifiers=tuple(parts[3:])
+            if any(mod not in TOP_LEVEL_MODIFIERS for mod in modifiers):
+                raise ValueError(f'rules[{index}]: unsupported RULE-SET modifier: {raw}')
+            result.append(TopLevelRule(index,raw,kind,parts[2],modifiers,provider=parts[1]))
+            continue
+        if len(parts) < 3:
+            raise ValueError(f'rules[{index}]: malformed top-level rule: {raw}')
+        tail=len(parts)
+        while tail > 1 and parts[tail-1] in TOP_LEVEL_MODIFIERS: tail-=1
+        policy=parts[tail-1]
+        modifiers=tuple(parts[tail:])
+        matcher_raw=','.join([parts[0], *parts[1:tail-1], *modifiers])
+        if not policy or len(parts[1:tail-1]) == 0:
+            raise ValueError(f'rules[{index}]: missing matcher or policy: {raw}')
+        try:
+            matchers=tuple(parse(matcher_raw,'classical',f'top-level[{index}]'))
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f'rules[{index}]: unsupported top-level rule: {raw} ({exc})') from exc
+        result.append(TopLevelRule(index,raw,kind,policy,modifiers,matchers=matchers))
+    if not result: raise ValueError('rules: no top-level rules')
+    matches=[r for r in result if r.kind == 'MATCH']
+    if len(matches) > 1 or (matches and matches[0].index != result[-1].index):
+        raise ValueError('rules[{}]: MATCH must occur once and be terminal: {}'.format(matches[1].index if len(matches)>1 else matches[0].index, matches[1].raw if len(matches)>1 else matches[0].raw))
+    return result
+
 def derive_groups(cfg):
-    """Derive contiguous RULE-SET segments directly from the sole input SoT."""
+    """Derive only contiguous, compatible RULE-SET SRS segments from the IR."""
     groups=[]; current=None; counts={}
-    for index, raw in enumerate(cfg.get('rules',[])):
-        parts=str(raw).split(',')
-        if parts[0].upper()!='RULE-SET':
+    for rule in parse_top_level_rules(cfg):
+        if rule.kind!='RULE-SET':
             current=None
             continue
-        if len(parts)<3: raise ValueError(f'rules[{index}]: malformed RULE-SET: {raw}')
-        provider,policy=parts[1],parts[2]; modifiers=tuple(parts[3:])
-        if any(x not in ('no-resolve',) for x in modifiers): raise ValueError(f'rules[{index}]: unsupported RULE-SET modifier: {raw}')
-        key=(policy,modifiers)
+        key=(rule.policy,rule.modifiers)
         if current is None or current['_key']!=key:
             ordinal=counts.get(key,0)+1; counts[key]=ordinal
-            tag=SEGMENT_TAGS.get((policy,modifiers,ordinal))
-            if tag is None: raise ValueError(f'rules[{index}]: no stable public tag for segment {key} #{ordinal}')
-            current={'tag':tag,'policy':policy,'modifiers':list(modifiers),'providers':[],'_key':key,'top_level_index':index}
+            tag=stable_segment_tag(rule.policy,rule.modifiers,ordinal)
+            current={'tag':tag,'policy':rule.policy,'modifiers':list(rule.modifiers),'providers':[],'_key':key,'top_level_index':rule.index}
             groups.append(current)
-        current['providers'].append(provider)
+        current['providers'].append(rule.provider)
     for g in groups: g.pop('_key')
-    if not groups: raise ValueError('rules: no RULE-SET segments')
     return groups
 
 def norm(v):
@@ -265,6 +319,46 @@ def serialize_source_rules(matchers):
             selected={k:list(dict.fromkeys(fields[k])) for k in group if fields.get(k)}
             if selected: rules.append(selected)
     return rules
+
+def matcher_route_rule(matcher, policy):
+    """Create one route rule for one top-level matcher without reordering it."""
+    if matcher.kind in ('port','port_range','source_port','source_port_range'):
+        rule={matcher.kind:json.loads(matcher.value)}
+    else:
+        rule={matcher.kind:[matcher.value]}
+    rule.update(policy_action(policy))
+    return rule
+
+def build_route_plan(cfg, groups=None):
+    """Turn the complete top-level IR into ordered sing-box route entries.
+
+    A contiguous RULE-SET segment is represented once at its first input index;
+    all other entries are represented one-for-one (or by the safe OR expansion
+    of a port list).  `consumed` always counts original input entries.
+    """
+    top_rules=parse_top_level_rules(cfg)
+    groups=groups if groups is not None else derive_groups(cfg)
+    segment_at={}
+    for group in groups:
+        for index in range(group['top_level_index'], group['top_level_index']+len(group['providers'])):
+            segment_at[index]=group
+    rules=[]; final=None; consumed=0; emitted_segments=[]
+    for top in top_rules:
+        consumed+=1
+        if top.kind == 'MATCH':
+            action=policy_action(top.policy)
+            if action['action'] == 'route': final=action['outbound']
+            else: rules.append(action) # a terminal catch-all reject action
+        elif top.kind == 'RULE-SET':
+            group=segment_at.get(top.index)
+            if group is None: raise RuntimeError(f'rules[{top.index}]: RULE-SET was not assigned a segment')
+            top.segment_tag=group['tag']
+            if top.index == group['top_level_index']:
+                route={'rule_set':[group['tag']]}; route.update(policy_action(top.policy)); rules.append(route); emitted_segments.append(group['tag'])
+        else:
+            rules.extend(matcher_route_rule(m,top.policy) for m in top.matchers)
+    if consumed != len(top_rules): raise RuntimeError('top-level rule consumption mismatch')
+    return {'top_rules':top_rules,'groups':groups,'rules':rules,'final':final,'consumed':consumed,'emitted_segments':emitted_segments}
 def semantic_audit(rule_dir, sb, groups, allms, fmt='binary'):
     """Verify compiled route order using samples from the current rule sources.
 
@@ -345,7 +439,7 @@ def sha256_file(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('input'); ap.add_argument('--base-url',default='https://raw.githubusercontent.com/Piggy-Cat-bit-shadow/singbox-srs-converter/main'); ap.add_argument('--sing-box',default='sing-box'); a=ap.parse_args()
-    cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; groups=derive_groups(cfg); names=[p for g in groups for p in g['providers']]
+    cfg=yaml.safe_load(Path(a.input).read_text()); providers=cfg['rule-providers']; groups=derive_groups(cfg); route_plan=build_route_plan(cfg,groups); names=[p for g in groups for p in g['providers']]
     if len(names)!=len(set(names)) or set(names)!=set(providers): raise SystemExit('provider/rules mismatch: every provider must be used exactly once')
     tmp=Path(tempfile.mkdtemp(prefix='srs-build-',dir=ROOT)); (tmp/'source').mkdir(); (tmp/'srs').mkdir(); (tmp/'legacy-source').mkdir(); (tmp/'legacy-srs').mkdir(); (tmp/'generated').mkdir(); details={}; allms={}; stats={k:0 for k in SAMPLES}
     try:
@@ -377,7 +471,8 @@ def main():
             for provider in g['providers']:
                 survivors=[m for m in clean if m.provider==provider]
                 coverage[provider]={'group':g['tag'],'raw_rules':details[provider]['raw_count'],'converted_matchers':len(allms[provider]),'surviving_matchers':len(survivors),'headless_rules':len(serialize_source_rules(survivors)),'coverage':'emitted' if survivors else 'covered_by_same_segment'}
-        route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':[{'ip_cidr':['0.0.0.0/32'],'action':'reject','method':'default'}]+[({'rule_set':[g['tag']],'action':'reject','method':'drop'} if g['policy']=='REJECT-DROP' else {'rule_set':[g['tag']],'action':'route','outbound':POLICY_OUTBOUNDS[g['policy']]}) for g in groups],'final':'overseas'}}
+        route={'route':{'rule_set':[{'type':'remote','tag':g['tag'],'format':'binary','url':a.base_url.rstrip('/')+'/dist/srs/'+g['tag']+'.srs','update_interval':'1d'} for g in groups],'rules':route_plan['rules']}}
+        if route_plan['final'] is not None: route['route']['final']=route_plan['final']
         (tmp/'generated'/'sing-box-route.json').write_text(json.dumps(route,ensure_ascii=False,indent=2)+'\n')
         semantic=semantic_audit(tmp/'srs',a.sing_box,groups,allms)
         source_semantic=semantic_audit(tmp/'source',a.sing_box,groups,allms,'source')
@@ -387,9 +482,9 @@ def main():
         audit_payload={'version':1,'route_order':[g['tag'] for g in groups],'total':len(semantic),'passed':len(semantic)-len(failed),'failed':len(failed),'cases':semantic}
         (tmp/'semantic-audit.json').write_text(json.dumps(audit_payload,ensure_ascii=False,indent=2)+'\n')
         if failed: raise RuntimeError('semantic regression failed: '+json.dumps(failed,ensure_ascii=False))
-        route_tags=[r['rule_set'][0] for r in route['route']['rules'][1:]]
+        route_tags=[r['rule_set'][0] for r in route['route']['rules'] if 'rule_set' in r]
         expected_tags=[g['tag'] for g in groups]
-        if route_tags != expected_tags: raise RuntimeError('route order does not match derived segments')
+        if route_tags != expected_tags or route_plan['emitted_segments'] != expected_tags: raise RuntimeError('route order does not match derived segments')
         source_tags={p.stem for p in (tmp/'source').glob('*.json')}; srs_tags={p.stem for p in (tmp/'srs').glob('*.srs')}
         if source_tags != set(expected_tags) or srs_tags != set(expected_tags): raise RuntimeError('source/SRS tags do not match route')
         legacy_benchmark=benchmark_rule_sets(tmp/'legacy-srs',a.sing_box,groups,tmp,18080)
@@ -400,7 +495,8 @@ def main():
         if rss_comparable and optimized_benchmark['max_rss'] >= legacy_benchmark['max_rss']: raise RuntimeError('runtime RSS benchmark did not improve: '+json.dumps({'legacy':legacy_benchmark,'optimized':optimized_benchmark}))
         (tmp/'memory-benchmark.json').write_text(json.dumps(benchmark,ensure_ascii=False,indent=2)+'\n')
         (tmp/'memory-benchmark.md').write_text('# Runtime Memory Benchmark\n\n| Metric | Legacy | Optimized | Reduction |\n|---|---:|---:|---:|\n| Max RSS ('+benchmark['rss_unit']+') | '+str(legacy_benchmark['max_rss'])+' | '+str(optimized_benchmark['max_rss'])+' | '+str(benchmark['rss_reduction_percent'])+'% |\n| Initialization (ms) | '+str(legacy_benchmark['init_ms'])+' | '+str(optimized_benchmark['init_ms'])+' | '+str(benchmark['init_reduction_percent'])+'% |\n\nLinux/macOS RSS is a comparative CI signal, not an iOS Packet Tunnel memory guarantee.\n')
-        acceptance={'version':1,'input_sha256':sha256_file(Path(a.input)),'provider_coverage':coverage,'providers_included':len(coverage),'providers_total':len(providers),'segments':len(groups),'srs_compile':{'passed':compile_count,'total':len(groups)},'srs_decompile':{'passed':decompile_count,'total':len(groups)},'semantic_regression':{'passed':audit_payload['passed'],'total':audit_payload['total'],'failed':audit_payload['failed']},'sampled_legacy_optimized_parity':{'passed':sampled_semantic['passed'],'total':sampled_semantic['total'],'failed':sampled_semantic['failed']},'source_binary_parity':True,'route_coherence':True,'source_sha256':{p.stem:sha256_file(p) for p in (tmp/'source').glob('*.json')},'srs_sha256':{p.stem:sha256_file(p) for p in (tmp/'srs').glob('*.srs')},'route_sha256':sha256_file(tmp/'generated'/'sing-box-route.json')}
+        route_fidelity={'input_top_level_rules':len(route_plan['top_rules']),'consumed_top_level_rules':route_plan['consumed'],'unsupported_rules':0,'silent_drop_count':0,'route_rule_entries':len(route_plan['rules']),'segment_order':route_plan['emitted_segments'],'final_policy':route_plan['final'],'policy_fidelity':True,'ordinary_rules_emitted':sum(1 for r in route_plan['top_rules'] if r.kind not in ('RULE-SET','MATCH'))}
+        acceptance={'version':1,'input_sha256':sha256_file(Path(a.input)),'provider_coverage':coverage,'providers_included':len(coverage),'providers_total':len(providers),'segments':len(groups),'srs_compile':{'passed':compile_count,'total':len(groups)},'srs_decompile':{'passed':decompile_count,'total':len(groups)},'semantic_regression':{'passed':audit_payload['passed'],'total':audit_payload['total'],'failed':audit_payload['failed']},'sampled_legacy_optimized_parity':{'passed':sampled_semantic['passed'],'total':sampled_semantic['total'],'failed':sampled_semantic['failed']},'source_binary_parity':True,'route_coherence':True,'route_fidelity':route_fidelity,'source_sha256':{p.stem:sha256_file(p) for p in (tmp/'source').glob('*.json')},'srs_sha256':{p.stem:sha256_file(p) for p in (tmp/'srs').glob('*.srs')},'route_sha256':sha256_file(tmp/'generated'/'sing-box-route.json')}
         (tmp/'acceptance.json').write_text(json.dumps(acceptance,ensure_ascii=False,indent=2)+'\n')
         status='# Build Status: PASS\n\nInput: examples/my-rules.yaml\n\nProviders: {}/{} included\nSegments: {}/{}\nSRS compile: {}/{} PASS\nSRS decompile: {}/{} PASS\nProvider coverage: {}/{} PASS\nSemantic regression: {}/{} PASS\nSampled legacy/optimized parity: {}/{} PASS\nSource/Binary parity: PASS\nRuntime benchmark: {}\nRoute order: PASS\nUnsupported rules: 0\n\nResult:\nAll generated rule sets passed acceptance checks.\n'.format(len(coverage),len(providers),len(groups),len(groups),compile_count,len(groups),decompile_count,len(groups),len(coverage),len(providers),audit_payload['passed'],audit_payload['total'],sampled_semantic['passed'],sampled_semantic['total'],'RSS PASS' if rss_comparable else 'initialization PASS; RSS unavailable on this platform')
         (tmp/'STATUS.md').write_text(status)
@@ -408,7 +504,7 @@ def main():
         if removed != sum(stats.values()): raise ValueError('dedup accounting mismatch')
         runtime_before={'headless_rules':before_headless_total,'matcher_values':before_matcher_values}
         runtime_after={'headless_rules':after_headless_total,'matcher_values':after_matcher_values}
-        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'runtime_structure_before':runtime_before,'runtime_structure_after':runtime_after,'runtime_structure':{'unaggregated_headless_rules':before_headless_total,'aggregated_headless_rules':after_headless_total,'reduction':before_headless_total-after_headless_total,'reduction_percent':round((before_headless_total-after_headless_total)/before_headless_total*100,2) if before_headless_total else 0.0},'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload,'sampled_legacy_optimized_parity':sampled_semantic,'memory_benchmark':benchmark,'acceptance':acceptance}
+        report={'version':1,'sing_box_version':subprocess.run([a.sing_box,'version'],capture_output=True,text=True).stdout.strip(),'providers':len(providers),'groups':len(groups),'segments':groups,'raw_rules':sum(x['raw_count'] for x in details.values()),'mapped_original_rules':sum(x['parsed_count'] for x in details.values()),'top_level_route_fidelity':route_fidelity,'unsupported_rules':0,'semantic_limitations':['Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted.'],'asn_rules':asn_rules,'asn_expanded_prefixes':sum(v for v in asn_audit.get('prefixes',{}).values()),'ip_rules_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' in m.modifiers),'ip_rules_without_no_resolve':sum(1 for ms in allms.values() for m in ms if m.kind=='ip_cidr' and 'no-resolve' not in m.modifiers),'before_dedup_matchers':before_total,'after_dedup_matchers':after_total,'removed_matchers':removed,'removed_percent':round(removed/before_total*100,2) if before_total else 0.0,'runtime_structure_before':runtime_before,'runtime_structure_after':runtime_after,'runtime_structure':{'unaggregated_headless_rules':before_headless_total,'aggregated_headless_rules':after_headless_total,'reduction':before_headless_total-after_headless_total,'reduction_percent':round((before_headless_total-after_headless_total)/before_headless_total*100,2) if before_headless_total else 0.0},'dedup':stats,'groups_detail':group_details,'providers_detail':details,'upstreams':{n:{'type':s['type'],'url':s.get('url'),'path':s.get('path'),'sha256':details[n]['sha256'],'raw_rules':details[n]['raw_count']} for n,s in providers.items()},'asn_database':asn_audit,'semantic_audit':audit_payload,'sampled_legacy_optimized_parity':sampled_semantic,'memory_benchmark':benchmark,'acceptance':acceptance}
         report_json=json.dumps(report,ensure_ascii=False,indent=2)+'\n'; json.loads(report_json); (tmp/'report.json').write_text(report_json)
         md='# singbox-srs-converter Build Report\n\n## Summary\n\n| Item | Value |\n|---|---:|\n'+''.join(f'| {k} | {report[k]} |\n' for k in ('providers','groups','raw_rules','mapped_original_rules','unsupported_rules','asn_rules','asn_expanded_prefixes','before_dedup_matchers','after_dedup_matchers','removed_matchers','removed_percent'))
         (tmp/'report.md').write_text(md)

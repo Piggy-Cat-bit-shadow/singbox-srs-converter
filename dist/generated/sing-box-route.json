@@ -53,6 +53,27 @@
         "method": "default"
       },
       {
+        "ip_cidr": [
+          "1.12.226.144/32"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "ip_cidr": [
+          "195.245.241.114/32"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "ip_cidr": [
+          "95.169.6.169/32"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
         "rule_set": [
           "direct-pre"
         ],
@@ -64,7 +85,7 @@
           "ai"
         ],
         "action": "route",
-        "outbound": "ai"
+        "outbound": "🤖 AI"
       },
       {
         "rule_set": [
@@ -78,7 +99,7 @@
           "overseas"
         ],
         "action": "route",
-        "outbound": "overseas"
+        "outbound": "⚡ 海外高速"
       },
       {
         "rule_set": [
@@ -95,6 +116,6 @@
         "outbound": "direct"
       }
     ],
-    "final": "overseas"
+    "final": "⚡ 海外高速"
   }
 }

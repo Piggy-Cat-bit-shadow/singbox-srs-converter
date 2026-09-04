@@ -1,7 +1,7 @@
 import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
-from build import parse, dedup, serialize_source_rules, derive_groups
+from build import build_route_plan, parse, parse_top_level_rules, dedup, serialize_source_rules, derive_groups
 from validate_artifacts import expected_provider_names, check
 import json
 import tempfile
@@ -79,6 +79,48 @@ class BuildTests(unittest.TestCase):
     def test_groups_come_from_rules_order(self):
         cfg={'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT','RULE-SET,C,🤖 AI','RULE-SET,D,DIRECT','RULE-SET,E,⚡ 海外高速','RULE-SET,F,REJECT-DROP','RULE-SET,G,DIRECT','RULE-SET,H,DIRECT,no-resolve']}
         self.assertEqual([g['providers'] for g in derive_groups(cfg)], [['A','B'],['C'],['D'],['E'],['F'],['G'],['H']])
+
+    def test_top_level_route_preserves_custom_policy_and_order(self):
+        cfg={'rules':[
+            'IP-CIDR,1.12.226.144/32,DIRECT,no-resolve',
+            'RULE-SET,A,🤖 AI',
+            'DOMAIN-SUFFIX,example.com,My Custom Group',
+            'RULE-SET,B,住宅 出口',
+            'MATCH,住宅 出口',
+        ]}
+        plan=build_route_plan(cfg)
+        self.assertEqual(plan['consumed'],5)
+        self.assertEqual(plan['final'],'住宅 出口')
+        self.assertEqual(plan['rules'][0],
+            {'ip_cidr':['1.12.226.144/32'],'action':'route','outbound':'direct'},
+        )
+        self.assertEqual([r['outbound'] for r in plan['rules']], ['direct','🤖 AI','My Custom Group','住宅 出口'])
+        self.assertEqual(plan['rules'][2]['domain_suffix'],['example.com'])
+
+    def test_top_level_policy_keywords_and_reject_drop(self):
+        cfg={'rules':['DOMAIN,blocked.example,REJECT','DOMAIN,drop.example,REJECT-DROP','MATCH,DIRECT']}
+        plan=build_route_plan(cfg)
+        self.assertEqual(plan['rules'],[
+            {'domain':['blocked.example'],'action':'reject','method':'default'},
+            {'domain':['drop.example'],'action':'reject','method':'drop'},
+        ])
+        self.assertEqual(plan['final'],'direct')
+
+    def test_unsupported_top_level_rule_fails_loudly(self):
+        with self.assertRaisesRegex(ValueError, r'rules\[17\]: unsupported top-level rule: GEOIP,CN,DIRECT'):
+            parse_top_level_rules({'rules':['DOMAIN,ok.example,DIRECT'] * 17 + ['GEOIP,CN,DIRECT']})
+
+    def test_current_fixture_top_level_fidelity(self):
+        import yaml
+        cfg=yaml.safe_load((Path(__file__).parents[1] / 'examples' / 'my-rules.yaml').read_text())
+        plan=build_route_plan(cfg)
+        self.assertEqual(plan['consumed'],len(cfg['rules']))
+        self.assertEqual(plan['final'],'⚡ 海外高速')
+        routes=plan['rules']
+        self.assertEqual([route['ip_cidr'][0] for route in routes[:4]], ['0.0.0.0/32','1.12.226.144/32','195.245.241.114/32','95.169.6.169/32'])
+        self.assertEqual(routes[0]['action'],'reject')
+        self.assertEqual([route['outbound'] for route in routes if route.get('rule_set') == ['ai']], ['🤖 AI'])
+        self.assertEqual([route['outbound'] for route in routes if route.get('rule_set') == ['overseas']], ['⚡ 海外高速'])
 
     def test_provider_count_follows_consumed_rule_sets(self):
         cfg={'rule-providers': {'A': {}, 'B': {}}, 'rules':['RULE-SET,A,DIRECT','RULE-SET,B,DIRECT']}

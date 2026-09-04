@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 linux/amd64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0,with_purego\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: disabled",
+  "sing_box_version": "sing-box version 1.14.0\n\nEnvironment: go1.26.7 darwin/arm64\nTags: with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_cloudflared,with_naive_outbound,with_usbip,with_openvpn,with_openconnect,badlinkname,tfogo_checklinkname0\nRevision: 0b8995879f29a9b98ee027bc17b75e101445b238\nCGO: enabled",
   "providers": 50,
   "groups": 6,
   "segments": [
@@ -105,32 +105,50 @@
       "top_level_index": 53
     }
   ],
-  "raw_rules": 174002,
-  "mapped_original_rules": 174002,
+  "raw_rules": 173862,
+  "mapped_original_rules": 173862,
+  "top_level_route_fidelity": {
+    "input_top_level_rules": 55,
+    "consumed_top_level_rules": 55,
+    "unsupported_rules": 0,
+    "silent_drop_count": 0,
+    "route_rule_entries": 10,
+    "segment_order": [
+      "direct-pre",
+      "ai",
+      "direct-middle",
+      "overseas",
+      "direct-cn",
+      "direct-cn-ip"
+    ],
+    "final_policy": "⚡ 海外高速",
+    "policy_fidelity": true,
+    "ordinary_rules_emitted": 4
+  },
   "unsupported_rules": 0,
   "semantic_limitations": [
     "Mihomo no-resolve has no SRS field; preserved in IR/provenance and no resolve action is inserted."
   ],
   "asn_rules": 9,
-  "asn_expanded_prefixes": 1184,
+  "asn_expanded_prefixes": 1236,
   "ip_rules_no_resolve": 243,
-  "ip_rules_without_no_resolve": 23508,
-  "before_dedup_matchers": 175371,
-  "after_dedup_matchers": 165980,
+  "ip_rules_without_no_resolve": 23533,
+  "before_dedup_matchers": 175283,
+  "after_dedup_matchers": 165892,
   "removed_matchers": 9391,
-  "removed_percent": 5.35,
+  "removed_percent": 5.36,
   "runtime_structure_before": {
-    "headless_rules": 175371,
-    "matcher_values": 175371
+    "headless_rules": 175283,
+    "matcher_values": 175283
   },
   "runtime_structure_after": {
     "headless_rules": 12,
-    "matcher_values": 165980
+    "matcher_values": 165892
   },
   "runtime_structure": {
-    "unaggregated_headless_rules": 175371,
+    "unaggregated_headless_rules": 175283,
     "aggregated_headless_rules": 12,
-    "reduction": 175359,
+    "reduction": 175271,
     "reduction_percent": 99.99
   },
   "dedup": {
@@ -176,21 +194,21 @@
     "ai": {
       "provider_count": 13,
       "raw_rules": 843,
-      "normalized_matchers": 1779,
-      "optimized_matchers": 1720,
-      "before_dedup_matchers": 1779,
-      "after_dedup_matchers": 1720,
+      "normalized_matchers": 1831,
+      "optimized_matchers": 1772,
+      "before_dedup_matchers": 1831,
+      "after_dedup_matchers": 1772,
       "dedup_removed": 59,
-      "unaggregated_headless_rules": 1779,
+      "unaggregated_headless_rules": 1831,
       "aggregated_headless_rules": 2,
-      "matcher_values_before": 1779,
-      "matcher_values_after": 1720,
+      "matcher_values_before": 1831,
+      "matcher_values_after": 1772,
       "matcher_kinds_before": {
         "domain": 96,
         "domain_suffix": 722,
         "domain_keyword": 17,
         "domain_regex": 1,
-        "ip_cidr": 939,
+        "ip_cidr": 991,
         "source_ip_cidr": 0
       },
       "matcher_kinds_after": {
@@ -198,11 +216,11 @@
         "domain_suffix": 688,
         "domain_keyword": 16,
         "domain_regex": 1,
-        "ip_cidr": 939,
+        "ip_cidr": 991,
         "source_ip_cidr": 0
       },
-      "srs_bytes_before": 12968,
-      "srs_bytes_after": 12672
+      "srs_bytes_before": 13516,
+      "srs_bytes_after": 12978
     },
     "direct-middle": {
       "provider_count": 5,
@@ -232,7 +250,7 @@
         "ip_cidr": 194,
         "source_ip_cidr": 0
       },
-      "srs_bytes_before": 5372,
+      "srs_bytes_before": 5370,
       "srs_bytes_after": 4631
     },
     "overseas": {
@@ -268,53 +286,53 @@
     },
     "direct-cn": {
       "provider_count": 6,
-      "raw_rules": 125372,
-      "normalized_matchers": 125565,
-      "optimized_matchers": 124039,
-      "before_dedup_matchers": 125565,
-      "after_dedup_matchers": 124039,
+      "raw_rules": 125262,
+      "normalized_matchers": 125455,
+      "optimized_matchers": 123929,
+      "before_dedup_matchers": 125455,
+      "after_dedup_matchers": 123929,
       "dedup_removed": 1526,
-      "unaggregated_headless_rules": 125565,
+      "unaggregated_headless_rules": 125455,
       "aggregated_headless_rules": 2,
-      "matcher_values_before": 125565,
-      "matcher_values_after": 124039,
+      "matcher_values_before": 125455,
+      "matcher_values_after": 123929,
       "matcher_kinds_before": {
         "domain": 354,
-        "domain_suffix": 112467,
+        "domain_suffix": 112354,
         "domain_keyword": 13,
         "domain_regex": 0,
-        "ip_cidr": 12710,
+        "ip_cidr": 12713,
         "source_ip_cidr": 0
       },
       "matcher_kinds_after": {
         "domain": 268,
-        "domain_suffix": 111159,
+        "domain_suffix": 111046,
         "domain_keyword": 13,
         "domain_regex": 0,
-        "ip_cidr": 12585,
+        "ip_cidr": 12588,
         "source_ip_cidr": 0
       },
-      "srs_bytes_before": 667673,
-      "srs_bytes_after": 502483
+      "srs_bytes_before": 666321,
+      "srs_bytes_after": 501571
     },
     "direct-cn-ip": {
       "provider_count": 1,
-      "raw_rules": 9651,
-      "normalized_matchers": 9651,
-      "optimized_matchers": 9651,
-      "before_dedup_matchers": 9651,
-      "after_dedup_matchers": 9651,
+      "raw_rules": 9621,
+      "normalized_matchers": 9621,
+      "optimized_matchers": 9621,
+      "before_dedup_matchers": 9621,
+      "after_dedup_matchers": 9621,
       "dedup_removed": 0,
-      "unaggregated_headless_rules": 9651,
+      "unaggregated_headless_rules": 9621,
       "aggregated_headless_rules": 1,
-      "matcher_values_before": 9651,
-      "matcher_values_after": 9651,
+      "matcher_values_before": 9621,
+      "matcher_values_after": 9621,
       "matcher_kinds_before": {
         "domain": 0,
         "domain_suffix": 0,
         "domain_keyword": 0,
         "domain_regex": 0,
-        "ip_cidr": 9651,
+        "ip_cidr": 9621,
         "source_ip_cidr": 0
       },
       "matcher_kinds_after": {
@@ -322,11 +340,11 @@
         "domain_suffix": 0,
         "domain_keyword": 0,
         "domain_regex": 0,
-        "ip_cidr": 9651,
+        "ip_cidr": 9621,
         "source_ip_cidr": 0
       },
-      "srs_bytes_before": 55647,
-      "srs_bytes_after": 36460
+      "srs_bytes_before": 55457,
+      "srs_bytes_after": 36449
     }
   },
   "providers_detail": {
@@ -609,7 +627,7 @@
     "qcloud": {
       "raw_count": 347,
       "parsed_count": 347,
-      "sha256": "be337959196d01b309b41aa8e1b45c9b55672fb4d699a21526ad4717e3a8c5dc",
+      "sha256": "5ffba08d1d07be369d409d6d662fb47ea82f70e854eefbddc6ee5897546f2ccb",
       "source": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/qcloud.yaml"
     },
     "global": {
@@ -619,15 +637,15 @@
       "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml"
     },
     "chinamax": {
-      "raw_count": 123877,
-      "parsed_count": 123877,
-      "sha256": "2b46c4ee45bd440c1d23014d26d477d3fec3d62543b04f7c453f633c03719dcf",
+      "raw_count": 123767,
+      "parsed_count": 123767,
+      "sha256": "c867cf00397343a251cb22bdfa62bfa7ed00c79f7f2f8026164c2be9f56c0ce6",
       "source": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml"
     },
     "cn-ip": {
-      "raw_count": 9651,
-      "parsed_count": 9651,
-      "sha256": "2bc01bbaf32f235597d0edf035466735bc4867b9b65ad75b034779368ddf53a4",
+      "raw_count": 9621,
+      "parsed_count": 9621,
+      "sha256": "371a38eef020b66477d6a62c531e9cc033d5a15c550f37bf54c12ac13b213a4c",
       "source": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.list"
     }
   },
@@ -958,7 +976,7 @@
       "type": "http",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/qcloud.yaml",
       "path": "./ruleset/qcloud.yaml",
-      "sha256": "be337959196d01b309b41aa8e1b45c9b55672fb4d699a21526ad4717e3a8c5dc",
+      "sha256": "5ffba08d1d07be369d409d6d662fb47ea82f70e854eefbddc6ee5897546f2ccb",
       "raw_rules": 347
     },
     "global": {
@@ -972,22 +990,22 @@
       "type": "http",
       "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml",
       "path": "./ruleset/chinamax.yaml",
-      "sha256": "2b46c4ee45bd440c1d23014d26d477d3fec3d62543b04f7c453f633c03719dcf",
-      "raw_rules": 123877
+      "sha256": "c867cf00397343a251cb22bdfa62bfa7ed00c79f7f2f8026164c2be9f56c0ce6",
+      "raw_rules": 123767
     },
     "cn-ip": {
       "type": "http",
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.list",
       "path": null,
-      "sha256": "2bc01bbaf32f235597d0edf035466735bc4867b9b65ad75b034779368ddf53a4",
-      "raw_rules": 9651
+      "sha256": "371a38eef020b66477d6a62c531e9cc033d5a15c550f37bf54c12ac13b213a4c",
+      "raw_rules": 9621
     }
   },
   "asn_database": {
-    "release": "1788385905",
+    "release": "1788471848",
     "prefixes": {
-      "GeoLite2-ASN-Blocks-IPv4.csv": 903,
-      "GeoLite2-ASN-Blocks-IPv6.csv": 281
+      "GeoLite2-ASN-Blocks-IPv4.csv": 904,
+      "GeoLite2-ASN-Blocks-IPv6.csv": 332
     }
   },
   "semantic_audit": {
@@ -2649,57 +2667,31 @@
   "memory_benchmark": {
     "version": 1,
     "method": "sing-box run with local binary SRS, loopback mixed inbound, 3 runs; median reported",
-    "platform": "Linux 6.17.0-1022-azure x86_64",
-    "rss_unit": "kb",
-    "rss_comparable": true,
+    "platform": "Darwin 24.6.0 arm64",
+    "rss_unit": "platform-unavailable",
+    "rss_comparable": false,
     "legacy": {
-      "max_rss": 152204,
-      "rss_unit": "kb",
-      "init_ms": 706.97,
+      "max_rss": 0,
+      "rss_unit": "platform-unavailable",
+      "init_ms": 488.65,
       "runs": 3,
-      "samples": [
-        {
-          "max_rss": 152204,
-          "init_ms": 656.61
-        },
-        {
-          "max_rss": 154572,
-          "init_ms": 759.69
-        },
-        {
-          "max_rss": 151168,
-          "init_ms": 706.97
-        }
-      ]
+      "samples": []
     },
     "optimized": {
-      "max_rss": 62304,
-      "rss_unit": "kb",
-      "init_ms": 101.49,
+      "max_rss": 0,
+      "rss_unit": "platform-unavailable",
+      "init_ms": 116.71,
       "runs": 3,
-      "samples": [
-        {
-          "max_rss": 63832,
-          "init_ms": 101.39
-        },
-        {
-          "max_rss": 62200,
-          "init_ms": 101.66
-        },
-        {
-          "max_rss": 62304,
-          "init_ms": 101.49
-        }
-      ]
+      "samples": []
     },
-    "legacy_max_rss_kb": 152204,
-    "optimized_max_rss_kb": 62304,
-    "median_max_rss_kb": 62304,
-    "legacy_init_ms": 706.97,
-    "optimized_init_ms": 101.49,
-    "median_init_ms": 101.49,
-    "rss_reduction_percent": 59.07,
-    "init_reduction_percent": 85.64
+    "legacy_max_rss_kb": null,
+    "optimized_max_rss_kb": null,
+    "median_max_rss_kb": null,
+    "legacy_init_ms": 488.65,
+    "optimized_init_ms": 116.71,
+    "median_init_ms": 116.71,
+    "rss_reduction_percent": null,
+    "init_reduction_percent": 76.12
   },
   "acceptance": {
     "version": 1,
@@ -2748,8 +2740,8 @@
       "openai": {
         "group": "ai",
         "raw_rules": 35,
-        "converted_matchers": 971,
-        "surviving_matchers": 966,
+        "converted_matchers": 1023,
+        "surviving_matchers": 1018,
         "headless_rules": 1,
         "coverage": "emitted"
       },
@@ -3091,17 +3083,17 @@
       },
       "chinamax": {
         "group": "direct-cn",
-        "raw_rules": 123877,
-        "converted_matchers": 124070,
-        "surviving_matchers": 122746,
+        "raw_rules": 123767,
+        "converted_matchers": 123960,
+        "surviving_matchers": 122636,
         "headless_rules": 2,
         "coverage": "emitted"
       },
       "cn-ip": {
         "group": "direct-cn-ip",
-        "raw_rules": 9651,
-        "converted_matchers": 9651,
-        "surviving_matchers": 9651,
+        "raw_rules": 9621,
+        "converted_matchers": 9621,
+        "surviving_matchers": 9621,
         "headless_rules": 1,
         "coverage": "emitted"
       }
@@ -3129,22 +3121,40 @@
     },
     "source_binary_parity": true,
     "route_coherence": true,
+    "route_fidelity": {
+      "input_top_level_rules": 55,
+      "consumed_top_level_rules": 55,
+      "unsupported_rules": 0,
+      "silent_drop_count": 0,
+      "route_rule_entries": 10,
+      "segment_order": [
+        "direct-pre",
+        "ai",
+        "direct-middle",
+        "overseas",
+        "direct-cn",
+        "direct-cn-ip"
+      ],
+      "final_policy": "⚡ 海外高速",
+      "policy_fidelity": true,
+      "ordinary_rules_emitted": 4
+    },
     "source_sha256": {
-      "direct-cn": "44485be8b6fe92b617d3f0773fffba76c3419b1b8b9e618c0dbd8cd606d477d1",
-      "direct-cn-ip": "f5fe51ad9ef152f9919c6c22091a32668853ef3fe6453daec42794982798cee9",
-      "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304",
+      "direct-cn-ip": "071d59e0d2c0533831cde6bcf78f8c0aa743d1e9d644140c5c6dbe2be374c012",
+      "ai": "77df1e81c58d566c2604f9fa3a4aa10efc024ce78ef2c661f3d21e6994b6468b",
       "direct-pre": "ce38669f9233f0de26cc128be515d825a6daac146d597ed94b34fc6c87476d62",
-      "direct-middle": "dbe76b413cd18c54e09c0a28e968aaebb72cf0c3d8288bb51ac1ecb8f3b0548f",
-      "ai": "ddfbc5ec2316440c9b234e73d55c6e47a041f9f306ddbe7b4c40759f10d143e3"
+      "direct-cn": "5589fef8a8484ec2b53433593c71c3e28a3b182eb718a190313457265c43559f",
+      "direct-middle": "58505998968fc4a500ca078f675ad3ef40604f6efd30df3065a7ba2a63057e69",
+      "overseas": "52ea25ec02cc1d867e64ae565b4dcaa1da1436016030061fcb172d7918663304"
     },
     "srs_sha256": {
-      "ai": "9383acacd43e4693a0dc70df6d94264b47456dcc37ef17d157881b8ededad3ba",
+      "direct-cn": "8e8cf7b8c34e61c3b540e05f6bbe5c712d8b467efba22968d5b36388ebb107b9",
+      "direct-cn-ip": "31faf10b64695649f83bf821b75ad4e745393cfa55ec01809786c4ce105d92ca",
       "direct-pre": "ad279d5cbe0d257dfe684ae29272224389f5cf6c65bc867b021e2dd7cb6703ea",
-      "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
-      "direct-cn-ip": "ec0c240a4d86dac60881e8d5a03ded84fb54cb4d4a219463a8b59b3104112e52",
       "direct-middle": "09f0a036c10624d0a8742d6fb01ec576d577472951c1a9e2b63386eba828c34c",
-      "direct-cn": "e74c95305bb4cca9ffe8a22fd8a6fbee3a3ac0078473d812c994c0b6ea948f8b"
+      "overseas": "43e9e115b07025cefcc2edc433d82ed8b5dd30948be791d7aa8dd99978c6280b",
+      "ai": "e0646b373a746b0070c639d97fcbf7130d49f282b22d25b79261132f28e93e7f"
     },
-    "route_sha256": "5476508d2e17959238e176dd93a740fe2521e1dd552ac88cc7187ddd6b55bf56"
+    "route_sha256": "cab69fa7fe5d26c2d72563b99181e6867ff50b41155c2fef0309a5af2713ae05"
   }
 }

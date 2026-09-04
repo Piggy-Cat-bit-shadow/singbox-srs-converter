@@ -21,7 +21,9 @@ Clients consume `dist/srs/*.srs`. Do not hand-edit `dist/`; it is rebuilt atomic
 - `dist/report.json`: build statistics and checksums
 - `dist/semantic-audit.json`: required runtime regression results
 
-The builder derives every contiguous `RULE-SET` policy segment from `rules:`. It preserves the current seven public tags while keeping non-adjacent policies separate. Compression is policy-segment-local: exact duplicates are removed, exact domains covered by suffixes are removed, child suffixes covered by a parent suffix are removed, and destination/source CIDRs are independently collapsed with `ipaddress.collapse_addresses`. Keywords and regexes are only exact-deduplicated.
+The builder parses every top-level `rules:` entry into an ordered route plan. `RULE-SET` entries refer to compact SRS matcher artifacts; ordinary domain/IP/process/port rules become route rules directly; and a terminal `MATCH` becomes `route.final` (or a terminal reject action). The SRS tag is never an outbound alias: custom policy names—including Unicode, emoji, spaces, and case—are retained exactly. Unsupported top-level rules fail the build with their input index rather than being skipped.
+
+Contiguous compatible `RULE-SET` entries are the only entries merged into a segment. The builder preserves the current public tags while keeping non-adjacent policies separate. Compression is policy-segment-local: exact duplicates are removed, exact domains covered by suffixes are removed, child suffixes covered by a parent suffix are removed, and destination/source CIDRs are independently collapsed with `ipaddress.collapse_addresses`. Keywords and regexes are only exact-deduplicated.
 
 For lower headless runtime object counts, destination fields (`domain`, suffix, keyword, regex, destination CIDR) are emitted as one OR rule per modifier bucket. Source CIDR, destination/source ports, network, and process fields are emitted as separate rules, so independent Mihomo rules are never accidentally converted into an AND condition. `dist/report.json` records matcher and headless-rule counts before and after aggregation for each segment.
 
